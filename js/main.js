@@ -3,9 +3,14 @@ d3.csv("data/top_200_password_2020_by_country.csv")
         // Perform data processing and derivation
 
         // Remove Time To Crack attribute as it is redundant
+        // Convert number attributes to numbers
         // Derive new attribute "Password Type"
         data.forEach((d) => {
             delete d["Time_to_crack"];
+            d["Global_rank"] = +d["Global_rank"];
+            d["Rank"] = +d["Rank"];
+            d["Time_to_crack_in_seconds"] = +d["Time_to_crack_in_seconds"];
+            d["User_count"] = +d["User_count"];
             d["password_type"] = determinePasswordType(d["Password"]);
         });
         console.log(data);
