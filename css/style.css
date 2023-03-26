@@ -1,15 +1,29 @@
 body {
     font-family: Helvetica, sans-serif;
     padding: 20px 40px;
+    /* background-color: #3b3a3a */
   }
+h1 {
+    font-family: 'Times New Roman', Times, serif;
+    margin: auto;
+    text-align: center;
+    font-style: italic;
+}
 
   .country {
-    stroke: #686767;
-    stroke-width: 1px;
+    stroke: #3d3c3c;
+    stroke-width: 2px;
+  }
+
+  .country-active{
+    stroke: #353533;
+    stroke-width: 4px;
   }
   
   .country:hover {
-    stroke: #333;
+    stroke: #353533;
+    stroke-width: 2px;
+    opacity: 1;
   }
   
   #tooltip {
