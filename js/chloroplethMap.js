@@ -9,7 +9,7 @@ class ChloroplethMap {
       parentElement: _config.parentElement,
       containerWidth: _config.containerWidth || 1400,
       containerHeight: _config.containerHeight || 800,
-      margin: _config.margin || { top: 0, right: 0, bottom: 0, left: 0 },
+      margin: _config.margin || { top: 50, right: 0, bottom: 0, left: 0 },
       tooltipPadding: 10,
       legendBottom: 50,
       legendLeft: 50,
