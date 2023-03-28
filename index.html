@@ -1,15 +1,52 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>D3 Project Starter Template</title>
-    <meta charset="UTF-8">
+  <head>
+    <title>Safe Cracker: Password Safety</title>
+    <meta charset="UTF-8" />
     <link rel="icon" href="data:;base64,iVBORwOKGO=" />
-    <link rel="stylesheet" href="css/style.css">
-</head>
-<body>    
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body text-align: center;>
     <!-- Add HTML content, SVG drawing area, ... -->
-    <h1>Safe Cracker: Password Safety</h1>
-    <div id="map-container" class="vis"></div>
+    <div class="header">
+      <h1>
+        Safe Cracker: Mapping the Security of the Top 200 Most Used Passwords
+        per Country
+      </h1>
+      <p>
+        Data is taken from NordVPN's 2021 report on top 200 passwords per
+        country
+      </p>
+      <div class="progress-container">
+        <div class="progress-bar" id="myBar"></div>
+      </div>
+    </div>
+    <div id="map-container" class="vis">
+      <svg
+        height="5"
+        width="5"
+        xmlns="http://www.w3.org/2000/svg"
+        version="1.1"
+      >
+        <defs>
+          <pattern
+            id="lightstripe"
+            patternUnits="userSpaceOnUse"
+            width="5"
+            height="5"
+          >
+            <image
+              xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc1JyBoZWlnaHQ9JzUnPgogIDxyZWN0IHdpZHRoPSc1JyBoZWlnaHQ9JzUnIGZpbGw9J3doaXRlJy8+CiAgPHBhdGggZD0nTTAgNUw1IDBaTTYgNEw0IDZaTS0xIDFMMSAtMVonIHN0cm9rZT0nIzg4OCcgc3Ryb2tlLXdpZHRoPScxJy8+Cjwvc3ZnPg=="
+              x="0"
+              y="0"
+              width="5"
+              height="5"
+            ></image>
+          </pattern>
+        </defs>
+      </svg>
+      <div id="tooltip"></div>
+    </div>
     <div id="lollipop-container" class="vis"></div>
     <div id="boxplot-container" class="vis"></div>
     <div id="histogram-container" class="vis"></div>
@@ -17,8 +54,27 @@
     <!-- D3 bundle -->
     <script src="js/d3.v6.min.js"></script>
 
+<!-- <div class="content">
+  <h3>Scroll Down to See The Effect</h3>
+  <p>We have created a "progress bar" to <b>show how far a page has been scrolled</b>.</p>
+  <p>It also <b>works when you scroll back up</b>.</p>
+  <p>It is even <b>responsive</b>! Resize the browser window to see the effect.</p>
+  <p>Some text to enable scrolling.. Lorem ipsum dolor sit amet, illum definitiones no quo, maluisset concludaturque et eum, altera fabulas ut quo. Atqui causae gloriatur ius te, id agam omnis evertitur eum. Affert laboramus repudiandae nec et. Inciderint efficiantur his ad. Eum no molestiae voluptatibus.</p>
+  <p>Some text to enable scrolling.. Lorem ipsum dolor sit amet, illum definitiones no quo, maluisset concludaturque et eum, altera fabulas ut quo. Atqui causae gloriatur ius te, id agam omnis evertitur eum. Affert laboramus repudiandae nec et. Inciderint efficiantur his ad. Eum no molestiae voluptatibus.</p>
+  <p>Some text to enable scrolling.. Lorem ipsum dolor sit amet, illum definitiones no quo, maluisset concludaturque et eum, altera fabulas ut quo. Atqui causae gloriatur ius te, id agam omnis evertitur eum. Affert laboramus repudiandae nec et. Inciderint efficiantur his ad. Eum no molestiae voluptatibus.</p>
+  <p>Some text to enable scrolling.. Lorem ipsum dolor sit amet, illum definitiones no quo, maluisset concludaturque et eum, altera fabulas ut quo. Atqui causae gloriatur ius te, id agam omnis evertitur eum. Affert laboramus repudiandae nec et. Inciderint efficiantur his ad. Eum no molestiae voluptatibus.</p>
+  <p>Some text to enable scrolling.. Lorem ipsum dolor sit amet, illum definitiones no quo, maluisset concludaturque et eum, altera fabulas ut quo. Atqui causae gloriatur ius te, id agam omnis evertitur eum. Affert laboramus repudiandae nec et. Inciderint efficiantur his ad. Eum no molestiae voluptatibus.</p>
+  <p>Some text to enable scrolling.. Lorem ipsum dolor sit amet, illum definitiones no quo, maluisset concludaturque et eum, altera fabulas ut quo. Atqui causae gloriatur ius te, id agam omnis evertitur eum. Affert laboramus repudiandae nec et. Inciderint efficiantur his ad. Eum no molestiae voluptatibus.</p>
+  <p>Some text to enable scrolling.. Lorem ipsum dolor sit amet, illum definitiones no quo, maluisset concludaturque et eum, altera fabulas ut quo. Atqui causae gloriatur ius te, id agam omnis evertitur eum. Affert laboramus repudiandae nec et. Inciderint efficiantur his ad. Eum no molestiae voluptatibus.</p>
+  <p>Some text to enable scrolling.. Lorem ipsum dolor sit amet, illum definitiones no quo, maluisset concludaturque et eum, altera fabulas ut quo. Atqui causae gloriatur ius te, id agam omnis evertitur eum. Affert laboramus repudiandae nec et. Inciderint efficiantur his ad. Eum no molestiae voluptatibus.</p>
+  <p>Some text to enable scrolling.. Lorem ipsum dolor sit amet, illum definitiones no quo, maluisset concludaturque et eum, altera fabulas ut quo. Atqui causae gloriatur ius te, id agam omnis evertitur eum. Affert laboramus repudiandae nec et. Inciderint efficiantur his ad. Eum no molestiae voluptatibus.</p>
+  <p>Some text to enable scrolling.. Lorem ipsum dolor sit amet, illum definitiones no quo, maluisset concludaturque et eum, altera fabulas ut quo. Atqui causae gloriatur ius te, id agam omnis evertitur eum. Affert laboramus repudiandae nec et. Inciderint efficiantur his ad. Eum no molestiae voluptatibus.</p>
+</div> -->
+
+
     <!-- Our JS code -->
     <script src="js/histogram.js"></script>
     <script src="js/main.js"></script>
-</body>
+    <script src="js/chloroplethMap.js"></script>
+  </body>
 </html>
