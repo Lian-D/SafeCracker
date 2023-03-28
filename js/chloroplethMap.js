@@ -4,12 +4,12 @@ class ChloroplethMap {
    * @param {Object}
    * @param {Array}
    */
-  constructor(_config, _data) {
+  constructor(_config, _data, _dispatcher) {
     this.config = {
       parentElement: _config.parentElement,
-      containerWidth: _config.containerWidth || 1200,
-      containerHeight: _config.containerHeight || 700,
-      margin: _config.margin || { top: 0, right: 0, bottom: 0, left: 0 },
+      containerWidth: _config.containerWidth || 1400,
+      containerHeight: _config.containerHeight || 800,
+      margin: _config.margin || { top: 50, right: 0, bottom: 0, left: 0 },
       tooltipPadding: 10,
       legendBottom: 50,
       legendLeft: 50,
@@ -17,7 +17,9 @@ class ChloroplethMap {
       legendRectWidth: 150,
     };
     this.data = _data;
+    this.dispatcher = _dispatcher;
     this.initVis();
+    this.selectedCountry;
   }
 
   /**
@@ -25,6 +27,7 @@ class ChloroplethMap {
    */
   initVis() {
     let vis = this;
+    vis.selectedCountry = 'Canada';
 
     // Calculate inner chart size. Margin specifies the space around the actual chart.
     vis.width =
@@ -58,7 +61,7 @@ class ChloroplethMap {
 
     vis.colorScale = d3
       .scaleLog()
-      .range(["#bd0026", "#ffffcc"])
+      .range(['#bd0026', '#ffffcc'])
       .interpolate(d3.interpolateHcl);
 
     // Initialize gradient that we will later use for the legend
@@ -96,13 +99,10 @@ class ChloroplethMap {
   updateVis() {
     let vis = this;
 
-    // console.log(vis.data);
     const codeDensityExtent = d3.extent(
       vis.data.features,
       (d) => d.properties.code_density
     );
-
-    // console.log(codeDensityExtent);
 
     // Update color scale
     vis.colorScale.domain(codeDensityExtent);
@@ -118,8 +118,6 @@ class ChloroplethMap {
 
   renderVis() {
     let vis = this;
-
-    // Convert compressed TopoJSON to GeoJSON format
     const countries = vis.data;
 
     // Defines the scale of the projection so that the geometry fits within the SVG area
@@ -130,17 +128,47 @@ class ChloroplethMap {
       .selectAll('.country')
       .data(countries.features)
       .join('path')
-      .attr('class', 'country')
+      .attr('class', (d) => {
+          return 'country'
+        })
       .attr('d', vis.geoPath)
       .attr('fill', (d) => {
         if (d.properties.code_density) {
-          // console.log(d.properties.name + d.properties.code_density);
-          // console.log(vis.colorScale(d.properties.code_density));
           return vis.colorScale(d.properties.code_density);
         } else {
           return 'url(#lightstripe)';
         }
-      });
+      })
+      .attr('pointer-events', (d) => {
+        if (!d.properties.code_density) {
+          return 'none';
+        } else {
+          return;
+        }
+      })
+      .attr('opacity', (d) => {
+        if (!d.properties.code_density) {
+          return 0.4
+        } else if (d.properties.name == vis.selectedCountry){
+          return 1;
+        } else {
+          return 0.75;
+        }
+      })
+      .attr('stroke', (d) => {
+         if (d.properties.name == vis.selectedCountry){
+          return '#1d1d1d'
+        } else {
+          return;
+         }
+      })
+      .attr('stroke-width', (d) => {
+        if (d.properties.name == vis.selectedCountry){
+         return '2px'
+       } else {
+        return;
+       }
+     });
 
     countryPath
       .on('mousemove', (event, d) => {
@@ -158,6 +186,9 @@ class ChloroplethMap {
       })
       .on('mouseleave', () => {
         d3.select('#tooltip').style('display', 'none');
+      })
+      .on('click', function (event, d) {
+        vis.dispatcher.call('countrySelect', event, d.properties.name);
       });
 
     // Add legend labels

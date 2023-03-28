@@ -1,3 +1,5 @@
+let fulldata, chloroplethMap
+const dispatcher = d3.dispatch('countrySelect', 'filterPasswordType', 'selectPass')
 Promise.all([
     d3.csv('data/top_200_password_2020_by_country.csv'),
     d3.json('data/world-map.geojson'),
@@ -22,9 +24,9 @@ Promise.all([
         let mapData = returnGeoMergeData(geoData, passworddata);
         console.log(mapData);
 
-        const chloroplethMap = new ChloroplethMap ({ 
+        chloroplethMap = new ChloroplethMap ({ 
             parentElement: '#map-container'
-          }, mapData);  
+          }, mapData, dispatcher);  
     })
     .catch((err) => {
         console.log(err);
@@ -69,13 +71,27 @@ function returnGeoMergeData(geoData, passwordData) {
     let aggregatedPasswordData = d3.rollups(passwordData, v => (d3.mean(v, d => d.Time_to_crack_in_seconds)), d => d.country);
     console.log(aggregatedPasswordData);
     geoData.features.forEach((d) => {
-        //   console.log(d);
         for (let i = 0; i < aggregatedPasswordData.length; i++) {
             if (d.properties.name == aggregatedPasswordData[i][0]) {
                 d.properties.code_density = aggregatedPasswordData[i][1];
             }
         }
     });
-    // console.log(geoData);
     return geoData;
 }
+
+dispatcher.on('countrySelect', (country) => {
+    console.log(country);
+    chloroplethMap.selectedCountry = [];
+    chloroplethMap.selectedCountry = country;
+    chloroplethMap.updateVis();
+})
+
+window.onscroll = function() {myFunction()};
+
+function myFunction() {
+  var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+  var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  var scrolled = (winScroll / height) * 100;
+  document.getElementById("myBar").style.width = scrolled + "%";
+} 
