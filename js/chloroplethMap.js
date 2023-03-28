@@ -129,7 +129,7 @@ class ChloroplethMap {
       .data(countries.features)
       .join('path')
       .attr('class', (d) => {
-          return 'country';
+          return 'country'
         })
       .attr('d', vis.geoPath)
       .attr('fill', (d) => {
@@ -148,11 +148,27 @@ class ChloroplethMap {
       })
       .attr('opacity', (d) => {
         if (!d.properties.code_density) {
-          return 0.2
-        } else {
+          return 0.4
+        } else if (d.properties.name == vis.selectedCountry){
           return 1;
+        } else {
+          return 0.75;
         }
-      });
+      })
+      .attr('stroke', (d) => {
+         if (d.properties.name == vis.selectedCountry){
+          return '#1d1d1d'
+        } else {
+          return;
+         }
+      })
+      .attr('stroke-width', (d) => {
+        if (d.properties.name == vis.selectedCountry){
+         return '2px'
+       } else {
+        return;
+       }
+     });
 
     countryPath
       .on('mousemove', (event, d) => {

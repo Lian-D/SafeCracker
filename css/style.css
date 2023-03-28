@@ -15,17 +15,18 @@ p {
 }
 
 .country {
-  stroke: #3d3c3c;
-  stroke-width: 2px;
+  /* stroke: #696868;
+  stroke-width: 2px; */
+  /* opacity: 0.75; */
 }
 
-.country-active {
-  stroke: #353533;
+.countryactive {
+  stroke: #696868;
   stroke-width: 4px;
 }
 
 .country:hover {
-  stroke: #353533;
+  stroke: #1d1d1d;
   stroke-width: 2px;
   opacity: 1;
 }
