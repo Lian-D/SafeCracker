@@ -1,4 +1,4 @@
-let fulldata, chloroplethMap, histogram
+let fulldata, chloroplethMap, beeswarm
 const dispatcher = d3.dispatch('countrySelect', 'filterPasswordType', 'selectPass')
 Promise.all([
     d3.csv('data/top_200_password_2020_by_country.csv'),
@@ -30,7 +30,7 @@ Promise.all([
             parentElement: '#map-container'
           }, mapData, dispatcher);
           
-        histogram = new Beeswarm({parentElement: '#histogram-container'}, passworddata.filter((d) => d.country == "Canada"));
+        beeswarm = new Beeswarm({parentElement: '#beeswarm-container'}, passworddata.filter((d) => d.country == "Canada"));
     })
     .catch((err) => {
         console.log(err);
@@ -90,8 +90,8 @@ dispatcher.on('countrySelect', (country) => {
     chloroplethMap.selectedCountry = country;
     chloroplethMap.updateVis();
 
-    histogram.data = fulldata.filter((d) => d.country == country);
-    histogram.updateVis();
+    beeswarm.data = fulldata.filter((d) => d.country == country);
+    beeswarm.updateVis();
 })
 
 window.onscroll = function() {myFunction()};
