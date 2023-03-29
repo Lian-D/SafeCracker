@@ -15,6 +15,10 @@ class Beeswarm {
             hoverPointOpacity: "1" || _config.hoverPointOpacity,
             defaultBarFill: "white" || _config.defaultBarFill,
             hoverBarFill: "aliceblue" || _config.hoverBarFill,
+            legendBottom: 50,
+            legendLeft: 50,
+            legendRectHeight: 12,
+            legendRectWidth: 150,
         };
         this.data = _data;
         this.dispatcher = _dispatcher;
@@ -46,6 +50,16 @@ class Beeswarm {
                         .tickFormat(d3.format("~s"))
                         .tickSizeOuter(0);
 
+        vis.colorScale = d3.scaleLog()
+                            .range(['#79d279', '#0000e6'])
+                            .interpolate(d3.interpolateHcl);
+                            
+
+        // Initialize gradient that we will later use for the legend
+        vis.linearGradient = vis.svg
+                                .append('defs')
+                                .append('linearGradient')
+                                .attr('id', 'legend-gradient-beeswarm');
         
         // Add x axis group
         vis.xAxisG = vis.chart.append("g")
@@ -72,7 +86,23 @@ class Beeswarm {
         vis.chart.on("mouseleave", (event,d) => {
             let allBars = d3.selectAll(".beeswarmbar");
             allBars.attr("fill", vis.config.defaultBarFill);
-        })
+        });
+
+        // Append legend
+        vis.legend = vis.svg.append('g')
+                                .attr('class', 'legend')
+                                .attr('transform', `translate(${vis.width/2 + vis.width/4},25)`);
+
+        vis.legendRect = vis.legend.append('rect')
+                                    .attr("class", "legendRect")
+                                    .attr('width', vis.config.legendRectWidth)
+                                    .attr('height', vis.config.legendRectHeight)
+
+        vis.legendTitle = vis.legend.append('text')
+                                        .attr('class', 'legend-title')
+                                        .attr('dy', '.35em')
+                                        .attr('y', -10)
+                                        .text('User count for passwords');
 
         vis.updateVis();
     }
@@ -90,6 +120,14 @@ class Beeswarm {
         let xExtent = d3.extent(vis.data,d => d["Time_to_crack_in_seconds"]);
         vis.xScale.domain(xExtent);
         
+        // Update color scale domain
+        let colorGradientExtent = d3.extent(vis.data, d => d["User_count"]) 
+        vis.colorScale.domain(colorGradientExtent);
+        // Define begin and end of the color gradient (legend)
+        vis.legendStops = [
+            { color: '#79d279', value: colorGradientExtent[0], offset: 0 },
+            { color: '#0000e6', value: colorGradientExtent[1], offset: 100 },
+        ];
         // Define function for binning data
         let binner = d3.bin()
                         .domain(vis.xScale.domain())
@@ -115,7 +153,7 @@ class Beeswarm {
     renderVis() {
         let vis = this;
         
-        vis.chart.selectAll("rect")
+        vis.chart.selectAll(".bar")
                     .data(vis.bins)
                     .join("rect")
                         .attr("class", "bar beeswarmbar")
@@ -139,7 +177,7 @@ class Beeswarm {
                         .attr("cx", d => d["x"])
                         .attr("cy", d => d["y"])
                         .attr("r", 2)
-                        .attr("fill", "blue")
+                        .attr("fill", d => vis.colorScale(d["User_count"]))
                         .attr("opacity", vis.config.defaultPointOpacity)
                         .on("mouseover", (event,d) => {
                             let point = d3.select(event.target);
@@ -160,11 +198,32 @@ class Beeswarm {
                         })
                         .on("mouseleave", (event,d) => {
                             let point = d3.select(event.target);
-                            point.attr("fill", "blue");
+                            point.attr("fill", d => vis.colorScale(d["User_count"]));
                             point.attr("opacity", vis.config.defaultPointOpacity);
                             d3.select("#tooltip")
                                 .style("display", "none");
-                        })
+                        });
+
+        // Add legend labels
+        vis.legend.selectAll('.legend-label')
+                    .data(vis.legendStops)
+                    .join('text')
+                    .attr('class', 'legend-label')
+                    .attr('text-anchor', 'middle')
+                    .attr('dy', '.35em')
+                    .attr('y', 20)
+                    .attr('x', (d, index) => {
+                    return index == 0 ? 0 : vis.config.legendRectWidth;
+                    })
+                    .text((d) => Math.round(d.value * 10) / 10);
+
+        // Update gradient folegend
+        vis.linearGradient.selectAll('stop')
+                            .data(vis.legendStops)
+                            .join('stop')
+                                .attr('offset', (d) => d.offset)
+                                .attr('stop-color', (d) => d.color);
+        vis.legendRect.attr("fill", "url(#legend-gradient-beeswarm");
         vis.xAxisG.call(vis.xAxis);
     }
 
