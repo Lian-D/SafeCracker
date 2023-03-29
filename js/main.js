@@ -1,4 +1,4 @@
-let fulldata, chloroplethMap
+let fulldata, chloroplethMap, lolipopgraph
 const dispatcher = d3.dispatch('countrySelect', 'filterPasswordType', 'selectPass')
 Promise.all([
     d3.csv('data/top_200_password_2020_by_country.csv'),
@@ -22,11 +22,16 @@ Promise.all([
             d['password_type'] = determinePasswordType(d['Password']);
         });
         let mapData = returnGeoMergeData(geoData, passworddata);
-        console.log(mapData);
+        // console.log(mapData);
+        fulldata = passworddata;
 
         chloroplethMap = new ChloroplethMap ({ 
             parentElement: '#map-container'
           }, mapData, dispatcher);  
+
+        lolipopgraph = new Lollipop  ({ 
+            parentElement: '#lollipop-container'
+          }, passworddata, dispatcher, "Canada");  
     })
     .catch((err) => {
         console.log(err);
@@ -69,7 +74,7 @@ function determinePasswordType(password) {
  */
 function returnGeoMergeData(geoData, passwordData) {
     let aggregatedPasswordData = d3.rollups(passwordData, v => (d3.mean(v, d => d.Time_to_crack_in_seconds)), d => d.country);
-    console.log(aggregatedPasswordData);
+    // console.log(aggregatedPasswordData);
     geoData.features.forEach((d) => {
         for (let i = 0; i < aggregatedPasswordData.length; i++) {
             if (d.properties.name == aggregatedPasswordData[i][0]) {
