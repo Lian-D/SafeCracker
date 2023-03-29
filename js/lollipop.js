@@ -7,7 +7,7 @@ class Lollipop {
       tooltipPadding: 15,
       margin: {
         top: 20,
-        left: 90,
+        left: 65,
         right: 20,
         bottom: 40,
       },
@@ -49,7 +49,7 @@ class Lollipop {
 
     // Init scales and axes
     vis.xScale = d3.scaleLog().range([0, vis.width - vis.config.margin.right]);
-    vis.yScale = d3.scaleBand().range([vis.height, 0]);
+    vis.yScale = d3.scalePoint().range([vis.height, 0]);
 
     vis.xAxis = d3
       .axisBottom(vis.xScale)
@@ -63,27 +63,12 @@ class Lollipop {
     vis.xAxisG = vis.chart
       .append('g')
       .attr('class', 'axis x-axis')
-      .attr('transform', `translate(0,${vis.height - 5})`);
+      .attr('transform', `translate(0,${vis.height})`);
     // Add y axis group
     vis.yAxisG = vis.chart
       .append('g')
       .attr('class', 'axis y-axis')
-      .attr('transform', `translate(0,-5)`);
-
-    // Add x axis label
-    vis.chart
-      .append('text')
-      .attr('class', 'label x-axis-title')
-      .attr('x', '0')
-      .attr('y', `${0 + vis.height}`);
-
-    // Add y axis label
-    vis.chart
-      .append('text')
-      .attr('class', 'label y-axis-title')
-      .attr('x', -vis.config.margin.left)
-      .attr('y', -5)
-      .text('User Count');
+      .attr('transform', `translate(0,0)`);
 
     vis.chart
       .append('text')
@@ -100,9 +85,11 @@ class Lollipop {
 
   updateVis() {
     let vis = this;
+    let rankFilter = d3.select('#numberselect').node().value;
+
     console.log(this.selectedCountry);
     vis.data = vis.fulldata.filter((d) => {
-      return d.country == vis.selectedCountry && d.Rank < 50;
+      return d.country == vis.selectedCountry && d.Rank <= rankFilter;
     });
 
     console.log(vis.data);
@@ -131,7 +118,8 @@ class Lollipop {
       .data(vis.data)
       .join('line')
       .attr('class', 'line')
-      .transition().duration(1000)
+      .transition()
+      .duration(1000)
       .attr('x1', (d) => {
         return vis.xScale(vis.xValue(d));
       })
@@ -144,14 +132,15 @@ class Lollipop {
       .attr('y2', (d) => {
         return vis.yScale(vis.yValue(d));
       })
-      .attr('stroke', 'grey')
+      .attr('stroke', 'grey');
 
     const passwordDot = vis.chart
       .selectAll('.circle')
       .data(vis.data)
       .join('circle')
       .attr('class', 'circle')
-      .transition().duration(1000)
+      .transition()
+      .duration(1000)
       .attr('cx', (d) => {
         return vis.xScale(vis.xValue(d));
       })
@@ -161,7 +150,8 @@ class Lollipop {
       .attr('r', '3')
       .attr('fill', 'red')
       .attr('stroke', 'grey')
-      .transition().duration(1000);
+      .transition()
+      .duration(1000);
 
     // passwordDot
     //   .on('mouseover', (event, d) => {

@@ -96,6 +96,9 @@ dispatcher.on('countrySelect', (country) => {
     lolipopgraph.updateVis();
 })
 
+d3.select('#numberselect').on('change', () => {
+});
+
 window.onscroll = function() {myFunction()};
 
 function myFunction() {
