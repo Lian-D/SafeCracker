@@ -2,7 +2,7 @@ class Beeswarm {
     constructor(_config,_data,_dispatcher) {
         this.config = {
             parentElement: _config.parentElement,
-            containerWidth: 1500 || _config.containerWidth,
+            containerWidth: 1400 || _config.containerWidth,
             containerHeight: 500 || _config.containerHeight,
             tooltipPadding: 15,
             margin: {
@@ -14,7 +14,7 @@ class Beeswarm {
             defaultPointOpacity: "0.5" || _config.defaultPointOpacity,
             hoverPointOpacity: "1" || _config.hoverPointOpacity,
             defaultBarFill: "white" || _config.defaultBarFill,
-            hoverBarFill: "aliceblue" || _config.hoverBarFill,
+            hoverBarFill: "#FFF8DC" || _config.hoverBarFill,
             legendBottom: 50,
             legendLeft: 50,
             legendRectHeight: 12,
@@ -42,7 +42,8 @@ class Beeswarm {
                             .attr("transform", `translate(${vis.config.margin.left}, ${vis.config.margin.top})`);
 
         // Init scales and axes
-        vis.xScale = d3.scaleLinear()
+        vis.xScale = d3.scalePow()
+                        .exponent(0.5)
                         .range([0,vis.width]);
 
         vis.xAxis = d3.axisBottom(vis.xScale)
@@ -91,7 +92,7 @@ class Beeswarm {
         // Append legend
         vis.legend = vis.svg.append('g')
                                 .attr('class', 'legend')
-                                .attr('transform', `translate(${vis.width/2 + vis.width/4},25)`);
+                                .attr('transform', `translate(${vis.width - vis.config.legendRectWidth},25)`);
 
         vis.legendRect = vis.legend.append('rect')
                                     .attr("class", "legendRect")
@@ -174,6 +175,21 @@ class Beeswarm {
                             allBars.attr("fill", vis.config.defaultBarFill);
                             let targetBar = d3.select(event.target);
                             targetBar.attr("fill", vis.config.hoverBarFill);
+                            d3.select("#tooltip")
+                                .style("display","block")
+                                .html(`<div class="tooltip-label">
+                                            Passwords with crack time between<br> 
+                                            ${Math.round(d.x0)}s-${Math.round(d.x1)}s
+                                        </div>`);
+                        })
+                        .on("mousemove", (event,d) => {
+                            d3.select("#tooltip")
+                                .style("left", (event.pageX + vis.config.tooltipPadding) + "px")
+                                .style("top", (event.pageY + vis.config.tooltipPadding) + "px")
+                        })
+                        .on("mouseleave", (event,d) => {
+                            d3.select("#tooltip")
+                                .style("display","none");
                         })
 
         vis.chart.selectAll("circle")
@@ -182,7 +198,7 @@ class Beeswarm {
                         .attr("class", "point")
                         .attr("cx", d => d["x"])
                         .attr("cy", d => d["y"])
-                        .attr("r", 2)
+                        .attr("r", 5)
                         .attr("fill", d => vis.colorScale(d["User_count"]))
                         .attr("opacity", vis.config.defaultPointOpacity)
                         .on("mouseover", (event,d) => {
@@ -240,10 +256,10 @@ class Beeswarm {
                 let xIncr = 0;
                 let yIncr = 0;
                 for (let i = 0; d[i] != undefined; i++) {
-                    d[i]["x"] = vis.xScale(d["x0"]) + 3 + 5*xIncr;
-                    d[i]["y"] = vis.height - 5 * yIncr - 5;
+                    d[i]["x"] = vis.xScale(d["x0"]) + 3 + 15*xIncr;
+                    d[i]["y"] = vis.height - 15 * yIncr - 5;
                     yIncr = yIncr + 1;
-                    if (5 * yIncr >= (vis.height - 5)) {
+                    if (15 * yIncr >= (vis.height - 5)) {
                         yIncr = 0;
                         xIncr = xIncr + 1;
                     }   
