@@ -94,6 +94,10 @@ dispatcher.on('countrySelect', (country) => {
     boxplot.updateVis();
 })
 
+dispatcher.on('filterPasswordType', (passwordType) => {
+    console.log(passwordType);
+})
+
 window.onscroll = function() {myFunction()};
 
 function myFunction() {

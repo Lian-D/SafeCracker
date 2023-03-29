@@ -6,6 +6,7 @@ class Boxplot {
       containerWidth: 800 || _config.containerWidth,
       containerHeight: 600 || _config.containerHeight,
       margin: { top: 40, right: 20, bottom: 50, left: 100 },
+      tooltipPadding: 15,
     };
 
 
@@ -132,16 +133,61 @@ class Boxplot {
 
 
     // box
+    let clicked;
     vis.chart.selectAll('.box')
       .data(vis.sumStats)
       .join('rect')
-        .attr('class', 'box')
+        .attr('class', d => `box type-${d['password_type']}`)
         .attr("x", d => (vis.xScale(vis.xValue(d)) - 100/2))
         .attr("y", d => vis.yScale(d['q3']))
         .attr("height", d => (vis.yScale(d['q1']) - vis.yScale(d['q3'])))
         .attr("width", 100)
         .attr("stroke", "black")
-        .style("fill", "#69b3a2");
+        .style("fill", "#69b3a2")
+          .on('mousemove', (event, d) => {
+            d3.select('#tooltip')
+              .style('display', 'block')
+              .style('left', (event.pageX + vis.config.tooltipPadding) + 'px')
+              .style('top', (event.pageY + vis.config.tooltipPadding) + 'px')
+              .html(`
+                <div class="tooltip-title">${d['password_type']} Password Stats in ${vis.selectedCountry}</div>
+                <div><i><strong>Q1:</strong> ${Math.ceil(d['q1']).toLocaleString("en-US")} users</i></div>
+                <div><i><strong>Median:</strong> ${Math.ceil(d['median']).toLocaleString("en-US")} users</i></div>
+                <div><i><strong>Q3:</strong> ${Math.ceil(d['q3']).toLocaleString("en-US")} users</i></div>
+                <div><i><strong>Min:</strong> ${Math.ceil(d['min']).toLocaleString("en-US")} users</i></div>
+                <div><i><strong>Max:</strong> ${Math.ceil(d['max']).toLocaleString("en-US")} users</i></div>
+              `);
+            
+            d3.select(`.type-${d['password_type']}`)
+              .style('fill', '#4a7d72');
+          })
+          .on('mouseleave', (_, d) => {
+            d3.select('#tooltip').style('display', 'none');
+
+            if (clicked != d['password_type']) {
+              d3.select(`.type-${d['password_type']}`)
+                .style('fill', '#69b3a2');
+            }
+          })
+          .on('click', function (event, d) {
+            if (clicked) {
+              if (clicked != d['password_type']) {
+                d3.select(`.type-${clicked}`)
+                .style('fill', '#69b3a2');
+
+                d3.select(`.type-${d['password_type']}`)
+                  .style('fill', '#4a7d72');
+
+                clicked = d['password_type'];
+              } else {
+                clicked = null;
+              }
+            } else {
+              clicked = d['password_type'];
+            }
+
+            vis.dispatcher.call('filterPasswordType', event, clicked);
+          });
 
 
     // median line
