@@ -1,4 +1,4 @@
-let fulldata, chloroplethMap
+let fulldata, chloroplethMap, boxplot
 const dispatcher = d3.dispatch('countrySelect', 'filterPasswordType', 'selectPass')
 Promise.all([
     d3.csv('data/top_200_password_2020_by_country.csv'),
@@ -27,6 +27,10 @@ Promise.all([
         chloroplethMap = new ChloroplethMap ({ 
             parentElement: '#map-container'
           }, mapData, dispatcher);  
+
+        boxplot = new Boxplot({
+            parentElement: '#boxplot-container'
+        }, passworddata, dispatcher);
     })
     .catch((err) => {
         console.log(err);
@@ -85,6 +89,13 @@ dispatcher.on('countrySelect', (country) => {
     chloroplethMap.selectedCountry = [];
     chloroplethMap.selectedCountry = country;
     chloroplethMap.updateVis();
+    
+    boxplot.selectedCountry = country;
+    boxplot.updateVis();
+})
+
+dispatcher.on('filterPasswordType', (passwordType) => {
+    console.log(passwordType);
 })
 
 window.onscroll = function() {myFunction()};
