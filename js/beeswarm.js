@@ -46,7 +46,7 @@ class Beeswarm {
                         .range([0,vis.width]);
 
         vis.xAxis = d3.axisBottom(vis.xScale)
-                        .ticks(35)
+                        .ticks(20)
                         .tickFormat(d3.format("~s"))
                         .tickSizeOuter(0);
 
@@ -128,11 +128,17 @@ class Beeswarm {
             { color: '#79d279', value: colorGradientExtent[0], offset: 0 },
             { color: '#0000e6', value: colorGradientExtent[1], offset: 100 },
         ];
+        // Define thresholds for binning
+        let numberOfBins = 70;
+        let thresholds = [];
+        for (let i = 0; i < numberOfBins; i++) {
+            thresholds.push((vis.xScale.domain()[1]/ numberOfBins)*i)
+        }
         // Define function for binning data
         let binner = d3.bin()
                         .domain(vis.xScale.domain())
                         .value(vis.xValue)
-                        .thresholds(70);
+                        .thresholds(thresholds);
         // Bin the data
         vis.bins = binner(vis.data);
 
@@ -158,7 +164,7 @@ class Beeswarm {
                     .join("rect")
                         .attr("class", "bar beeswarmbar")
                         .attr("x", d => vis.xScale(d.x0))
-                        .attr("width", vis.width/vis.bins.length)
+                        .attr("width", d => vis.xScale(d.x1-d.x0))
                         .attr("height", vis.height)
                         .attr("stroke-width", 2)
                         .attr("fill", vis.config.defaultBarFill)
