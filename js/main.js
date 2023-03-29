@@ -90,6 +90,10 @@ dispatcher.on('countrySelect', (country) => {
     chloroplethMap.selectedCountry = [];
     chloroplethMap.selectedCountry = country;
     chloroplethMap.updateVis();
+
+    lolipopgraph.selectedCountry = []
+    lolipopgraph.selectedCountry = country;
+    lolipopgraph.updateVis();
 })
 
 window.onscroll = function() {myFunction()};

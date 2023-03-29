@@ -14,6 +14,7 @@ class Lollipop {
       reverseOrder: _config.reverseOrder || false,
     };
     this.data = _data;
+    this.fulldata = _data;
     this.dispatcher = _dispatcher;
     this.selectedCountry = filteredCountry;
     this.initVis();
@@ -99,9 +100,12 @@ class Lollipop {
 
   updateVis() {
     let vis = this;
-    vis.data = vis.data.filter((d) => {
+    console.log(this.selectedCountry);
+    vis.data = vis.fulldata.filter((d) => {
       return d.country == vis.selectedCountry && d.Rank < 50;
     });
+
+    console.log(vis.data);
 
     if (vis.config.reverseOrder) {
       vis.data.reverse();
@@ -114,7 +118,7 @@ class Lollipop {
     // Update x scale domain
     let xExtent = d3.extent(vis.data, (d) => d.User_count);
     vis.xScale.domain(xExtent);
-    console.log(vis.data.map((d) => d.Password));
+    // console.log(vis.data.map((d) => d.Password));
 
     vis.yScale.domain(vis.data.map((d) => d.Password));
     vis.renderVis();
@@ -126,6 +130,8 @@ class Lollipop {
       .selectAll('.line')
       .data(vis.data)
       .join('line')
+      .attr('class', 'line')
+      .transition().duration(1000)
       .attr('x1', (d) => {
         return vis.xScale(vis.xValue(d));
       })
@@ -138,12 +144,14 @@ class Lollipop {
       .attr('y2', (d) => {
         return vis.yScale(vis.yValue(d));
       })
-      .attr('stroke', 'grey');
+      .attr('stroke', 'grey')
 
     const passwordDot = vis.chart
       .selectAll('.circle')
       .data(vis.data)
       .join('circle')
+      .attr('class', 'circle')
+      .transition().duration(1000)
       .attr('cx', (d) => {
         return vis.xScale(vis.xValue(d));
       })
@@ -152,7 +160,8 @@ class Lollipop {
       })
       .attr('r', '3')
       .attr('fill', 'red')
-      .attr('stroke', 'grey');
+      .attr('stroke', 'grey')
+      .transition().duration(1000);
 
     // passwordDot
     //   .on('mouseover', (event, d) => {
@@ -175,7 +184,7 @@ class Lollipop {
     //     d3.select('#lollipop-tooltip').style('opacity', 0);
     //   });
 
-    vis.xAxisG.call(vis.xAxis);
-    vis.yAxisG.call(vis.yAxis);
+    vis.xAxisG.call(vis.xAxis).transition().duration(1000);
+    vis.yAxisG.call(vis.yAxis).transition().duration(1000);
   }
 }
