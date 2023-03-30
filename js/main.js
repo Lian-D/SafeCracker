@@ -101,8 +101,16 @@ dispatcher.on('countrySelect', (country) => {
     boxplot.updateVis();
 })
 
-dispatcher.on('filterPasswordType', (passwordType) => {
+dispatcher.on('filterPasswordType', (passwordType, country) => {
     console.log(passwordType);
+
+    beeswarm.data = fulldata.filter((d) => {
+        if (passwordType) {
+            return d.country == country && d.password_type == passwordType;
+        }
+        return d.country == country;
+    });
+    beeswarm.updateVis();
 })
 
 window.onscroll = function() {myFunction()};

@@ -186,7 +186,7 @@ class Boxplot {
               clicked = d['password_type'];
             }
 
-            vis.dispatcher.call('filterPasswordType', event, clicked);
+            vis.dispatcher.call('filterPasswordType', event, clicked, vis.selectedCountry);
           });
 
 
