@@ -1,4 +1,4 @@
-let fulldata, chloroplethMap, beeswarm
+let fulldata, chloroplethMap, beeswarm, boxplot
 const dispatcher = d3.dispatch('countrySelect', 'filterPasswordType', 'selectPass')
 Promise.all([
     d3.csv('data/top_200_password_2020_by_country.csv'),
@@ -31,6 +31,10 @@ Promise.all([
           }, mapData, dispatcher);
           
         beeswarm = new Beeswarm({parentElement: '#beeswarm-container'}, passworddata.filter((d) => d.country == "Canada"));
+
+        boxplot = new Boxplot({
+            parentElement: '#boxplot-container'
+        }, passworddata, dispatcher);
     })
     .catch((err) => {
         console.log(err);
@@ -92,6 +96,13 @@ dispatcher.on('countrySelect', (country) => {
 
     beeswarm.data = fulldata.filter((d) => d.country == country);
     beeswarm.updateVis();
+    
+    boxplot.selectedCountry = country;
+    boxplot.updateVis();
+})
+
+dispatcher.on('filterPasswordType', (passwordType) => {
+    console.log(passwordType);
 })
 
 window.onscroll = function() {myFunction()};
