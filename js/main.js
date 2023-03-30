@@ -30,7 +30,7 @@ Promise.all([
             parentElement: '#map-container'
           }, mapData, dispatcher);
           
-        beeswarm = new Beeswarm({parentElement: '#beeswarm-container'}, passworddata.filter((d) => d.country == "Canada"));
+        beeswarm = new Beeswarm({parentElement: '#beeswarm-container'}, passworddata.filter((d) => d.country == "Canada"), dispatcher);
 
         boxplot = new Boxplot({
             parentElement: '#boxplot-container'
@@ -95,10 +95,22 @@ dispatcher.on('countrySelect', (country) => {
     chloroplethMap.updateVis();
 
     beeswarm.data = fulldata.filter((d) => d.country == country);
+    beeswarm.selectedPasswords = [];
     beeswarm.updateVis();
     
     boxplot.selectedCountry = country;
     boxplot.updateVis();
+})
+
+dispatcher.on('selectPass', (password, add = true) => {
+    if (add) {
+        beeswarm.selectedPasswords.push(password);
+        beeswarm.updateVis();
+    } else {
+        let ind = beeswarm.selectedPasswords.indexOf(password)
+        beeswarm.selectedPasswords.splice(ind,1);
+        beeswarm.updateVis();
+    }
 })
 
 dispatcher.on('filterPasswordType', (passwordType) => {
