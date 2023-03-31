@@ -72,13 +72,12 @@ class Lollipop {
 
     vis.chart
       .append('text')
-      .attr('class', 'label title')
+      .attr('class', 'labeltitle')
       .attr(
         'x',
         vis.width / 4 - vis.config.margin.left - vis.config.margin.right
       )
       .attr('y', -8)
-      .text('Top Passwords by User Count for select country');
 
     vis.updateVis();
   }
@@ -94,6 +93,9 @@ class Lollipop {
     if (vis.config.reverseOrder) {
       vis.data.reverse();
     }
+
+    d3.selectAll(".labeltitle")
+    .text(`Top ${rankFilter} passwords for ${vis.selectedCountry}`)
 
     // Specify accessors
     vis.xValue = (d) => d.User_count;
