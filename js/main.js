@@ -97,6 +97,16 @@ dispatcher.on('countrySelect', (country) => {
 })
 
 d3.select('#numberselect').on('change', () => {
+    console.log('change');
+
+    let rankFilter = d3.select('#numberselect').node().value;
+
+    let filterData = fulldata.filter((d) => {
+      return d.Rank <= rankFilter;
+    });
+
+    lolipopgraph.data = filterData;
+    lolipopgraph.updateVis();
 });
 
 window.onscroll = function() {myFunction()};

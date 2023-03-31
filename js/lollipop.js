@@ -78,7 +78,7 @@ class Lollipop {
         vis.width / 4 - vis.config.margin.left - vis.config.margin.right
       )
       .attr('y', -8)
-      .text('Top Passwords by User Count for ' + this.selectedCountry);
+      .text('Top Passwords by User Count for select country');
 
     vis.updateVis();
   }
@@ -87,12 +87,9 @@ class Lollipop {
     let vis = this;
     let rankFilter = d3.select('#numberselect').node().value;
 
-    console.log(this.selectedCountry);
     vis.data = vis.fulldata.filter((d) => {
       return d.country == vis.selectedCountry && d.Rank <= rankFilter;
     });
-
-    console.log(vis.data);
 
     if (vis.config.reverseOrder) {
       vis.data.reverse();
@@ -105,7 +102,6 @@ class Lollipop {
     // Update x scale domain
     let xExtent = d3.extent(vis.data, (d) => d.User_count);
     vis.xScale.domain(xExtent);
-    // console.log(vis.data.map((d) => d.Password));
 
     vis.yScale.domain(vis.data.map((d) => d.Password));
     vis.renderVis();
@@ -152,27 +148,6 @@ class Lollipop {
       .attr('stroke', 'grey')
       .transition()
       .duration(1000);
-
-    // passwordDot
-    //   .on('mouseover', (event, d) => {
-    //     console.log("moused")
-    //     d3.select('#lollipop-tooltip')
-    //       .style('opacity', 1)
-    //       // Format number with million and thousand separator
-    //       .html(
-    //         `<div class="tooltip-label">Population</div>${d3.format(',')(
-    //           d.population
-    //         )}`
-    //       );
-    //   })
-    //   .on('mousemove', (event) => {
-    //     d3.select('#lollipop-tooltip')
-    //       .style('left', event.pageX + vis.config.tooltipPadding + 'px')
-    //       .style('top', event.pageY + vis.config.tooltipPadding + 'px');
-    //   })
-    //   .on('mouseleave', () => {
-    //     d3.select('#lollipop-tooltip').style('opacity', 0);
-    //   });
 
     vis.xAxisG.call(vis.xAxis).transition().duration(1000);
     vis.yAxisG.call(vis.yAxis).transition().duration(1000);
