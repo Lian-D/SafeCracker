@@ -10,20 +10,14 @@ h1 {
   font-style: italic;
 }
 
+.divMid {
+  display: flex;
+}
+
 p {
   text-align: center;
   margin: auto;
 } 
-
-.lollipop-container {
-  display: flex;
-  margin: top 5px
-}
-
-.boxplot-container {
-  display: flex;
-  margin: top 5px
-}
 
 .country:hover {
   stroke: #1d1d1d;
