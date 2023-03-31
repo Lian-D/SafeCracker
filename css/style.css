@@ -9,21 +9,15 @@ h1 {
   text-align: center;
   font-style: italic;
 }
+
+.divMid {
+  display: flex;
+}
+
 p {
   text-align: center;
   margin: auto;
-}
-
-.country {
-  /* stroke: #696868;
-  stroke-width: 2px; */
-  /* opacity: 0.75; */
-}
-
-.countryactive {
-  stroke: #696868;
-  stroke-width: 4px;
-}
+} 
 
 .country:hover {
   stroke: #1d1d1d;
@@ -47,6 +41,22 @@ p {
   color: #000;
   font-size: 14px;
   font-weight: 600;
+}
+
+.axis line {
+  stroke: #020202;
+  shape-rendering: crispEdges;
+}
+.axis text {
+  font-size: 10px;
+  fill: #080808;
+}
+.axis-title {
+  font-size: 10px;
+  fill: #070606;
+}
+.y-axis .tick:first-child line {
+  stroke: #000000;
 }
 
 .legend-title {
@@ -76,6 +86,6 @@ p {
 /* The progress bar (scroll indicator) */
 .progress-bar {
   height: 8px;
-  background: #04aa6d;
+  background: #aa3904;
   width: 0%;
 }
