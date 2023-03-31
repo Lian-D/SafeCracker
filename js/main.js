@@ -1,4 +1,5 @@
-let fulldata, chloroplethMap, lolipopgraph
+
+let fulldata, chloroplethMap, beeswarm, boxplot, lolipopgraph
 const dispatcher = d3.dispatch('countrySelect', 'filterPasswordType', 'selectPass')
 Promise.all([
     d3.csv('data/top_200_password_2020_by_country.csv'),
@@ -12,6 +13,8 @@ Promise.all([
         // Derive new attribute "Password Type"
         const passworddata = data[0];
         const geoData = data[1];
+
+        fulldata = passworddata;
 
         passworddata.forEach((d) => {
             delete d['Time_to_crack'];
@@ -32,6 +35,12 @@ Promise.all([
         lolipopgraph = new Lollipop  ({ 
             parentElement: '#lollipop-container'
           }, passworddata, dispatcher, "Canada");  
+          
+        beeswarm = new Beeswarm({parentElement: '#beeswarm-container'}, passworddata.filter((d) => d.country == "Canada"));
+
+        boxplot = new Boxplot({
+            parentElement: '#boxplot-container'
+        }, passworddata, dispatcher);
     })
     .catch((err) => {
         console.log(err);
@@ -94,6 +103,23 @@ dispatcher.on('countrySelect', (country) => {
     lolipopgraph.selectedCountry = []
     lolipopgraph.selectedCountry = country;
     lolipopgraph.updateVis();
+    beeswarm.data = fulldata.filter((d) => d.country == country);
+    beeswarm.updateVis();
+    
+    boxplot.selectedCountry = country;
+    boxplot.updateVis();
+})
+
+dispatcher.on('filterPasswordType', (passwordType, country) => {
+    console.log(passwordType);
+
+    beeswarm.data = fulldata.filter((d) => {
+        if (passwordType) {
+            return d.country == country && d.password_type == passwordType;
+        }
+        return d.country == country;
+    });
+    beeswarm.updateVis();
 })
 
 d3.select('#numberselect').on('change', () => {
