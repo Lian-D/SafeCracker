@@ -4,7 +4,7 @@ class Boxplot {
     this.config = {
       parentElement: _config.parentElement,
       containerWidth: 800 || _config.containerWidth,
-      containerHeight: 600 || _config.containerHeight,
+      containerHeight: 500 || _config.containerHeight,
       margin: { top: 40, right: 20, bottom: 50, left: 100 },
       tooltipPadding: 15,
     };

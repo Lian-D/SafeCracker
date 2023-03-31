@@ -3,7 +3,7 @@ class Beeswarm {
         this.config = {
             parentElement: _config.parentElement,
             containerWidth: 1400 || _config.containerWidth,
-            containerHeight: 500 || _config.containerHeight,
+            containerHeight: 300 || _config.containerHeight,
             tooltipPadding: 15,
             margin: {
                 top: 20,

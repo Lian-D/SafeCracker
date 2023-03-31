@@ -3,7 +3,7 @@ class Lollipop {
     this.config = {
       parentElement: _config.parentElement,
       containerWidth: 800 || _config.containerWidth,
-      containerHeight: 570 || _config.containerHeight,
+      containerHeight: 470 || _config.containerHeight,
       tooltipPadding: 15,
       margin: {
         top: 20,
