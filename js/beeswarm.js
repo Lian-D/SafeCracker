@@ -161,13 +161,31 @@ class Beeswarm {
 
     renderVis() {
         let vis = this;
-        
+
+        // If the x domain is [0,0], make adjustments so that the only bin takes up the entire chart
+        // instead of half the chart (this is default behavior)
+        // These adjustments will be made after the axis is generated
+        let isOneBin = (vis.xScale.domain()[0] == 0 && vis.xScale.domain()[1] == 0) ? true: false;
+        // Offset used to shift the points in the case mentioned above
+        let oneBinOffset = vis.xScale(vis.bins[0]["x0"]);
         vis.chart.selectAll(".bar")
                     .data(vis.bins)
                     .join("rect")
                         .attr("class", "bar beeswarmbar")
-                        .attr("x", d => vis.xScale(d.x0))
-                        .attr("width", d => vis.xScale(d.x1-d.x0))
+                        .attr("x", d => {
+                            if (isOneBin) {
+                                return 0;
+                            } else {
+                                return vis.xScale(d.x0);
+                            }
+                        })
+                        .attr("width", d => {
+                            if (isOneBin) {
+                                return vis.width;
+                            } else {
+                                return vis.xScale(d.x1-d.x0);
+                            }
+                        })
                         .attr("height", vis.height)
                         .attr("stroke-width", 2)
                         .attr("fill", vis.config.defaultBarFill)
@@ -200,7 +218,13 @@ class Beeswarm {
                         .transition()
                         .duration(1000)
                         .attr("class", "point")
-                        .attr("cx", d => d["x"])
+                        .attr("cx", d => {
+                            if (isOneBin) {
+                                return d["x"] - oneBinOffset;
+                            } else {
+                                return d["x"];
+                            }
+                        })
                         .attr("cy", d => d["y"])
                         .attr("r", 5)
                         .attr("fill", d => {
@@ -284,6 +308,13 @@ class Beeswarm {
                                 .attr('stop-color', (d) => d.color);
         vis.legendRect.attr("fill", "url(#legend-gradient-beeswarm");
         vis.xAxisG.call(vis.xAxis);
+        // Manually position the one axis tick in the case of one bin only
+        if (isOneBin) {
+            let axis = vis.chart.selectAll(".x-axis");
+            // We know that there will only be one tick, so we can modify it directly
+            axis.selectAll(".tick")
+                    .attr("transform", "translate(0,0)");
+        }
     }
 
     generatePointCoordinates() {
