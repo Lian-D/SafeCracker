@@ -197,6 +197,8 @@ class Beeswarm {
         vis.chart.selectAll("circle")
                     .data(vis.dataForPoints, d => d.Password)
                     .join("circle")
+                        .transition()
+                        .duration(1000)
                         .attr("class", "point")
                         .attr("cx", d => d["x"])
                         .attr("cy", d => d["y"])
@@ -223,42 +225,43 @@ class Beeswarm {
                                 return null;
                             }
                         })
-                        .on("mouseover", (event,d) => {
-                            let point = d3.select(event.target);
-                            if (!vis.selectedPasswords.includes(d.Password)) {
-                                point.attr("fill","black");
-                                point.attr("opacity", vis.config.hoverPointOpacity);
-                            }
-                            d3.select("#tooltip")
-                                .style("display", "block")
-                                .html(`<div class="tooltip-label">
-                                        Password: "${d["Password"]}" <br>
-                                        Time to crack password: ${d["Time_to_crack_in_seconds"]}s <br>
-                                        Number of users: ${d["User_count"]}
-                                        </div>`);
-                        })
-                        .on("mousemove", (event,d) => {
-                            d3.select("#tooltip")
-                                .style("left", (event.pageX + vis.config.tooltipPadding) + "px")
-                                .style("top", (event.pageY + vis.config.tooltipPadding) + "px")
-                        })
-                        .on("mouseleave", (event,d) => {
-                            let point = d3.select(event.target);
-                            if (!vis.selectedPasswords.includes(d.Password)) {
-                                point.attr("fill", d => vis.colorScale(d["User_count"]));
-                                point.attr("opacity", vis.config.defaultPointOpacity);
-                            }
-                            d3.select("#tooltip")
-                                .style("display", "none");
-                        })
-                        .on("click", function(event,d) {
-                            if (vis.selectedPasswords.includes(d.Password)) {
-                                vis.dispatcher.call("selectPass", event, d.Password, false);
-                            } else {
-                                vis.dispatcher.call("selectPass", event, d.Password, true);
-                            }
-                            
-                        });
+        // After points have been updated, add event listeners
+        vis.chart.selectAll("circle")
+                    .on("mouseover", (event,d) => {
+                        let point = d3.select(event.target);
+                        if (!vis.selectedPasswords.includes(d.Password)) {
+                            point.attr("fill","black");
+                            point.attr("opacity", vis.config.hoverPointOpacity);
+                        }
+                        d3.select("#tooltip")
+                            .style("display", "block")
+                            .html(`<div class="tooltip-label">
+                                    Password: "${d["Password"]}" <br>
+                                    Time to crack password: ${d["Time_to_crack_in_seconds"]}s <br>
+                                    Number of users: ${d["User_count"]}
+                                    </div>`);
+                    })
+                    .on("mousemove", (event,d) => {
+                        d3.select("#tooltip")
+                            .style("left", (event.pageX + vis.config.tooltipPadding) + "px")
+                            .style("top", (event.pageY + vis.config.tooltipPadding) + "px")
+                    })
+                    .on("mouseleave", (event,d) => {
+                        let point = d3.select(event.target);
+                        if (!vis.selectedPasswords.includes(d.Password)) {
+                            point.attr("fill", d => vis.colorScale(d["User_count"]));
+                            point.attr("opacity", vis.config.defaultPointOpacity);
+                        }
+                        d3.select("#tooltip")
+                            .style("display", "none");
+                    })
+                    .on("click", function(event,d) {
+                        if (vis.selectedPasswords.includes(d.Password)) {
+                            vis.dispatcher.call("selectPass", event, d.Password, false);
+                        } else {
+                            vis.dispatcher.call("selectPass", event, d.Password, true);
+                        }
+                    });
 
         // Add legend labels
         vis.legend.selectAll('.legend-label')
