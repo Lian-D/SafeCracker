@@ -3,7 +3,7 @@ class Beeswarm {
         this.config = {
             parentElement: _config.parentElement,
             containerWidth: 1400 || _config.containerWidth,
-            containerHeight: 500 || _config.containerHeight,
+            containerHeight: 300 || _config.containerHeight,
             tooltipPadding: 15,
             margin: {
                 top: 20,
@@ -46,7 +46,7 @@ class Beeswarm {
 
         // Init scales and axes
         vis.xScale = d3.scalePow()
-                        .exponent(0.5)
+                        .exponent(0.4)
                         .range([0,vis.width]);
 
         vis.xAxis = d3.axisBottom(vis.xScale)
