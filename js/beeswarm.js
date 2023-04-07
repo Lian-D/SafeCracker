@@ -183,7 +183,7 @@ class Beeswarm {
                             if (isOneBin) {
                                 return vis.width;
                             } else {
-                                return vis.xScale(d.x1-d.x0);
+                                return vis.xScale(d.x1)-vis.xScale(d.x0);
                             }
                         })
                         .attr("height", vis.height)
@@ -251,6 +251,7 @@ class Beeswarm {
                         })
         // After points have been updated, add event listeners
         vis.chart.selectAll("circle")
+                    .raise()
                     .on("mouseover", (event,d) => {
                         let point = d3.select(event.target);
                         if (!vis.selectedPasswords.includes(d.Password)) {
