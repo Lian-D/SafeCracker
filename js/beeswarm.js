@@ -199,7 +199,11 @@ class Beeswarm {
                                 .style("display","block")
                                 .html(`<div class="tooltip-label">
                                             Passwords with crack time between<br> 
-                                            ${Math.round(d.x0)}s-${Math.round(d.x1)}s
+                                            ${Math.round(d.x0)}s-${Math.round(d.x1)}s<br>
+                                            <strong>NOTE: The position of the dots <br>
+                                            within each bin is not ordered, <br>
+                                            and therefore their position <br>
+                                            on the x-axis is not accurate</strong>
                                         </div>`);
                         })
                         .on("mousemove", (event,d) => {
