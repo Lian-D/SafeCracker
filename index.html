@@ -52,7 +52,20 @@
   </div>
 
   <div id="scatterplot-container" class="vis" style="margin: auto;"></div>
-  <div id="beeswarm-container" class="vis" style="margin: auto;"></div>
+  <div id="beeswarm-container" class="vis" style="margin: auto;">
+    <div class="beeswarm-info-container">
+        <p class="beeswarm-info">
+          Hover over the chart to highlight a bin, which contains passwords with time to crack within that bin's range. <br><br>
+          Hover over a dot to see the password it represents, with the time to crack and user count. Dots can be selected.<br><br>
+          The x-axis denotes the range of the bin, and not the time to crack for each password dot. <br><br>
+          A power scale has been used to emphasize the large volume of passwords with low time to crack. <br><br>
+          The time to crack is an estimate and more information can be found 
+          <a href="https://nordpass.com/most-common-passwords-list/" target="_blank">
+            here
+          </a>
+        </p>
+    </div>
+  </div>
   <!-- D3 bundle -->
   <script src="js/d3.v6.min.js"></script>
 
