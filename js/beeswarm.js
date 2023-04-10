@@ -183,9 +183,6 @@ class Beeswarm {
     vis.renderVis();
   }
 
-  renderVis() {
-    let vis = this;
-
     renderVis() {
         let vis = this;
 
