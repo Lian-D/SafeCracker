@@ -143,7 +143,7 @@ class Boxplot {
         .attr("height", d => (vis.yScale(d['q1']) - vis.yScale(d['q3'])))
         .attr("width", 100)
         .attr("stroke", "black")
-        .style("fill", "#69b3a2")
+        .style("fill", "#E5B5D8")
           .on('mousemove', (event, d) => {
             d3.select('#tooltip')
               .style('display', 'block')
@@ -159,24 +159,24 @@ class Boxplot {
               `);
             
             d3.select(`.type-${d['password_type']}`)
-              .style('fill', '#4a7d72');
+              .style('fill', '#FFCC00');
           })
           .on('mouseleave', (_, d) => {
             d3.select('#tooltip').style('display', 'none');
 
             if (clicked != d['password_type']) {
               d3.select(`.type-${d['password_type']}`)
-                .style('fill', '#69b3a2');
+                .style('fill', '#E5B5D8');
             }
           })
           .on('click', function (event, d) {
             if (clicked) {
               if (clicked != d['password_type']) {
                 d3.select(`.type-${clicked}`)
-                .style('fill', '#69b3a2');
+                .style('fill', '#E5B5D8');
 
                 d3.select(`.type-${d['password_type']}`)
-                  .style('fill', '#4a7d72');
+                  .style('fill', '#FFCC00');
 
                 clicked = d['password_type'];
               } else {
@@ -210,6 +210,8 @@ class Boxplot {
         .attr('class', 'chart-title')
         .attr('x', vis.width/2)
         .attr('y', -15)
+        .attr('font-weight', 700)
+        .attr('font-size', 15)
         .attr('text-anchor', 'middle')
         .text(d => `Average User Count by Password Type for ${d}`);
 
