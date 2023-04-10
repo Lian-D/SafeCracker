@@ -67,6 +67,26 @@ p {
   font-size: 0.7rem;
 }
 
+#beeswarm-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.beeswarm-info-container {
+  width: 180px;
+  order: 1;
+  font-size: 12px;
+  margin: 2px;
+
+}
+
+.beeswarm-info {
+  text-align: left;
+}
+
+
+
 /* Style the header: fixed position (always stay at the top) */
 .header {
   position: fixed;

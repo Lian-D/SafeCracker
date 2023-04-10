@@ -67,7 +67,7 @@ class Beeswarm {
 
     vis.colorScale = d3
       .scaleLog()
-      .range(['#79d279', '#0000e6'])
+      .range(['#FFB6C1', '#FF00FF'])
       .interpolate(d3.interpolateHcl);
 
     // Initialize gradient that we will later use for the legend
@@ -142,7 +142,7 @@ class Beeswarm {
     d3.selectAll('.chartTitle')
         .attr('font-weight', 700)
         .attr('font-size', 15)
-        .text(`Time To Crack Password Beeswarm for ${vis.data[0]['country']}`);
+        .text(`Time To Crack Passwords for ${vis.data[0]['country']}`);
 
     // Update x scale domain
     let xExtent = d3.extent(vis.data, (d) => d['Time_to_crack_in_seconds']);
@@ -153,8 +153,8 @@ class Beeswarm {
     vis.colorScale.domain(colorGradientExtent);
     // Define begin and end of the color gradient (legend)
     vis.legendStops = [
-      { color: '#79d279', value: colorGradientExtent[0], offset: 0 },
-      { color: '#0000e6', value: colorGradientExtent[1], offset: 100 },
+      { color: '#FFB6C1', value: colorGradientExtent[0], offset: 0 },
+      { color: '#FF00FF', value: colorGradientExtent[1], offset: 100 },
     ];
     // Define thresholds for binning
     let numberOfBins = 70;
@@ -225,10 +225,6 @@ class Beeswarm {
                                 .html(`<div class="tooltip-label">
                                             Passwords with crack time between<br> 
                                             ${Math.round(d.x0)}s-${Math.round(d.x1)}s<br>
-                                            <strong>NOTE: The position of the dots <br>
-                                            within each bin is not ordered, <br>
-                                            and therefore their position <br>
-                                            on the x-axis is not accurate</strong>
                                         </div>`);
       })
       .on('mousemove', (event, d) => {
