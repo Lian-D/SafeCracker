@@ -28,7 +28,6 @@ Promise.all([
       d['password_type'] = determinePasswordType(d['Password']);
     });
     let mapData = returnGeoMergeData(geoData, passworddata);
-    // console.log(mapData);
     fulldata = passworddata;
 
     chloroplethMap = new ChloroplethMap(
@@ -107,7 +106,6 @@ function returnGeoMergeData(geoData, passwordData) {
     (v) => d3.mean(v, (d) => d.Time_to_crack_in_seconds),
     (d) => d.country
   );
-  // console.log(aggregatedPasswordData);
   geoData.features.forEach((d) => {
     for (let i = 0; i < aggregatedPasswordData.length; i++) {
       if (d.properties.name == aggregatedPasswordData[i][0]) {
@@ -119,7 +117,6 @@ function returnGeoMergeData(geoData, passwordData) {
 }
 
 dispatcher.on('countrySelect', (country) => {
-  console.log(country);
   chloroplethMap.selectedCountry = [];
   chloroplethMap.selectedCountry = country;
   chloroplethMap.updateVis();
@@ -139,16 +136,21 @@ dispatcher.on('selectPass', (password, add = true) => {
     if (add) {
         beeswarm.selectedPasswords.push(password);
         beeswarm.updateVis();
+
+        lolipopgraph.selectedPasswords.push(password);
+        lolipopgraph.updateVis();
     } else {
         let ind = beeswarm.selectedPasswords.indexOf(password)
         beeswarm.selectedPasswords.splice(ind,1);
         beeswarm.updateVis();
+
+        let ind2 = lolipopgraph.selectedPasswords.indexOf(password)
+        lolipopgraph.selectedPasswords.splice(ind2,1);
+        lolipopgraph.updateVis();
     }
 })
 
 dispatcher.on('filterPasswordType', (passwordType, country) => {
-  console.log(passwordType);
-
   beeswarm.data = fulldata.filter((d) => {
     if (passwordType) {
       return d.country == country && d.password_type == passwordType;
@@ -159,7 +161,6 @@ dispatcher.on('filterPasswordType', (passwordType, country) => {
 });
 
 d3.select('#numberselect').on('change', () => {
-  console.log('change');
 
   let rankFilter = d3.select('#numberselect').node().value;
 

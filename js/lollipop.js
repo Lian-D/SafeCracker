@@ -17,6 +17,7 @@ class Lollipop {
     this.fulldata = _data;
     this.dispatcher = _dispatcher;
     this.selectedCountry = filteredCountry;
+    this.selectedPasswords = [];
     this.initVis();
   }
 
@@ -48,7 +49,8 @@ class Lollipop {
       );
 
     // Init scales and axes
-    vis.xScale = d3.scaleLog().range([0, vis.width - vis.config.margin.right]);
+    vis.xScale = d3.scalePow()
+    .exponent(0.5).range([0, vis.width - vis.config.margin.right]);
     vis.yScale = d3.scalePoint().range([vis.height, 0]);
 
     vis.xAxis = d3
@@ -68,7 +70,7 @@ class Lollipop {
     vis.yAxisG = vis.chart
       .append('g')
       .attr('class', 'axis y-axis')
-      .attr('transform', `translate(0,0)`);
+      .attr('transform', `translate(0,-5)`);
 
     vis.chart
       .append('text')
@@ -125,10 +127,10 @@ class Lollipop {
         return 0;
       })
       .attr('y1', (d) => {
-        return vis.yScale(vis.yValue(d));
+        return vis.yScale(vis.yValue(d))-5;
       })
       .attr('y2', (d) => {
-        return vis.yScale(vis.yValue(d));
+        return vis.yScale(vis.yValue(d))-5;
       })
       .attr('stroke', 'grey');
 
@@ -143,13 +145,53 @@ class Lollipop {
         return vis.xScale(vis.xValue(d));
       })
       .attr('cy', (d) => {
-        return vis.yScale(vis.yValue(d));
+        return vis.yScale(vis.yValue(d))-5;
       })
-      .attr('r', '3')
-      .attr('fill', 'red')
+      .attr('r', (d) => {
+        if (vis.selectedPasswords.includes(d.Password)) {
+            return "5"
+        } else {
+            return "3"
+        }
+      })
+      .attr('fill', (d) => {
+        if (vis.selectedPasswords.includes(d.Password)) {
+            return "#FFD700"
+        } else {
+            return "#E7A0D4"
+        }
+      })
       .attr('stroke', 'grey')
       .transition()
-      .duration(1000);
+      .duration(100);
+
+      vis.chart.selectAll("circle")
+      .raise()
+      .on("mouseover", (event,d) => {
+        d3.select("#tooltip")
+            .style("display", "block")
+            .html(`<div class="tooltip-label">
+                    <b>Password:</b> "${d["Password"]}" <br>
+                    <b>Time to crack password:</b> ${d["Time_to_crack_in_seconds"]}s <br>
+                    <b>Number of users:</b> ${d["User_count"]}
+                    </div>`);
+    })
+    .on("mousemove", (event,d) => {
+        d3.select("#tooltip")
+            .style("left", (event.pageX + vis.config.tooltipPadding) + "px")
+            .style("top", (event.pageY + vis.config.tooltipPadding) + "px")
+    })
+    .on("mouseleave", (event,d) => {
+        d3.select("#tooltip")
+            .style("display", "none");
+    })
+      .on("click", function(event,d) {
+          if (vis.selectedPasswords.includes(d.Password)) {
+              vis.dispatcher.call("selectPass", event, d.Password, false);
+          } else {
+              vis.dispatcher.call("selectPass", event, d.Password, true);
+          }
+      });
 
     vis.xAxisG.call(vis.xAxis).transition().duration(1000);
     vis.yAxisG.call(vis.yAxis).transition().duration(1000);
