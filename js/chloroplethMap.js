@@ -9,7 +9,7 @@ class ChloroplethMap {
       parentElement: _config.parentElement,
       containerWidth: _config.containerWidth || 1400,
       containerHeight: _config.containerHeight || 800,
-      margin: _config.margin || { top: 50, right: 0, bottom: 0, left: 0 },
+      margin: _config.margin || { top: 100, right: 0, bottom: 0, left: 0 },
       tooltipPadding: 10,
       legendBottom: 50,
       legendLeft: 50,
@@ -69,6 +69,16 @@ class ChloroplethMap {
       .append('defs')
       .append('linearGradient')
       .attr('id', 'legend-gradient');
+
+    // Append title
+    vis.chart.append('text')
+        .attr('class', 'title')
+        .attr('x', vis.width/2)
+        .attr('y', -15)
+        .attr('font-weight', 700)
+        .attr('font-size', 20)
+        .attr('text-anchor', 'middle')
+        .text('Average Time to Crack (TTC) Choropleth World Map');
 
     // Append legend
     vis.legend = vis.chart
