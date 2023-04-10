@@ -159,6 +159,7 @@ class Lollipop {
       })
       .attr('fill', (d) => {
         if (vis.selectedPasswords.includes(d.Password)) {
+
           return '#FFD700';
         } else {
           return '#E7A0D4';
@@ -193,6 +194,7 @@ class Lollipop {
         } else {
           vis.dispatcher.call('selectPass', event, d.Password, true);
         }
+
       });
 
     vis.xAxisG.call(vis.xAxis).transition().duration(1000);
