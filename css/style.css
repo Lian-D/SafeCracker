@@ -4,11 +4,26 @@
 body { min-height: 100vh; padding: 2rem; background-color: #EBEBEB; font-family: 'Open Sans', sans-serif; }
 body > * + *  { margin-top: 1.5em }
 h1{ text-align: center; font-weight: 800; color: rgb(6 6 6); text-transform: uppercase }
-blockquote { max-width: 1500em; margin-inline: auto }
+/* blockquote { max-width: 1500em; margin-inline: auto } */
 
 
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:400italic);
 blockquote{
+  font-size: 1.4em;
+  width:100%;
+  margin:50px auto;
+  font-family:Open Sans;
+  font-style:italic;
+  color: #555555;
+  padding:1.2em 30px 1.2em 75px;
+  border-left:8px solid #c08078 ;
+  line-height:1.6;
+  max-width: 2700em;
+  position: relative;
+  background:#EDEDED;
+}
+
+blockquote swarm{
   font-size: 1.4em;
   width:60%;
   margin:50px auto;
@@ -18,6 +33,7 @@ blockquote{
   padding:1.2em 30px 1.2em 75px;
   border-left:8px solid #c08078 ;
   line-height:1.6;
+  max-width: 350em;
   position: relative;
   background:#EDEDED;
 }
