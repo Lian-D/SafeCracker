@@ -99,7 +99,7 @@ class Lollipop {
     }
 
     d3.selectAll('.labeltitle').text(
-      `Top ${rankFilter} passwords for ${vis.selectedCountry}`
+      `Top ${rankFilter} Passwords for ${vis.selectedCountry} Based On User Count`
     );
 
     // Specify accessors
