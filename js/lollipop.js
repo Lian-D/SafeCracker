@@ -18,6 +18,7 @@ class Lollipop {
     this.dispatcher = _dispatcher;
     this.selectedCountry = filteredCountry;
     this.selectedPasswords = [];
+    this.selectedPasswordType = null;
     this.initVis();
   }
 
@@ -91,17 +92,34 @@ class Lollipop {
     let rankFilter = d3.select('#numberselect').node().value;
 
     vis.data = vis.fulldata.filter((d) => {
-      return d.country == vis.selectedCountry && d.Rank <= rankFilter;
+      if (vis.selectedPasswordType) {
+        return d.country == vis.selectedCountry && d.password_type == vis.selectedPasswordType;
+      } else {
+        return d.country == vis.selectedCountry;
+      }
     });
 
-    if (vis.config.reverseOrder) {
-      vis.data.reverse();
-    }
+    vis.data.sort((a, b) => {
+      return a.User_count > b.User_count;
+    });
 
-    d3.selectAll(".labeltitle")
+    vis.data = vis.data.slice(0, rankFilter);
+
+    let labeltext;
+
+    if (vis.selectedPasswordType) {
+        labeltext = `Top ${rankFilter} ${vis.selectedPasswordType} Passwords for ${vis.selectedCountry} Based On User Count`;
+    } else {
+        labeltext = `Top ${rankFilter} Passwords for ${vis.selectedCountry} Based On User Count`;
+    }
+    console.log(labeltext);
+
+    d3.selectAll('.labeltitle')
       .attr('font-weight', 700)
       .attr('font-size', 15)
-      .text(`Top ${rankFilter} passwords for ${vis.selectedCountry} Based On User Count`)
+      .text(
+        labeltext
+      );
 
     // Specify accessors
     vis.xValue = (d) => d.User_count;
@@ -160,7 +178,6 @@ class Lollipop {
       })
       .attr('fill', (d) => {
         if (vis.selectedPasswords.includes(d.Password)) {
-
           return '#FFD700';
         } else {
           return '#E7A0D4';
@@ -195,7 +212,6 @@ class Lollipop {
         } else {
           vis.dispatcher.call('selectPass', event, d.Password, true);
         }
-
       });
 
     vis.xAxisG.call(vis.xAxis).transition().duration(1000);
