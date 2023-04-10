@@ -154,7 +154,20 @@ class Lollipop {
       .attr('y2', (d) => {
         return vis.yScale(vis.yValue(d)) - 5;
       })
-      .attr('stroke', 'grey');
+      .attr('stroke', (d) => {
+        if (vis.selectedPasswords.includes(d.Password)) {
+          return '#FFD700';
+        } else {
+          return '#c08078';
+        }
+      })
+      .attr('stroke-width', (d) => {
+        if (vis.selectedPasswords.includes(d.Password)) {
+          return '3';
+        } else {
+          return '1';
+        }
+      });
 
     const passwordDot = vis.chart
       .selectAll('.circle')
@@ -180,10 +193,10 @@ class Lollipop {
         if (vis.selectedPasswords.includes(d.Password)) {
           return '#FFD700';
         } else {
-          return '#E7A0D4';
+          return '#c08078';
         }
       })
-      .attr('stroke', 'grey')
+      .attr('stroke', 'black')
       .transition()
       .duration(100);
 

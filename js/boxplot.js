@@ -143,7 +143,7 @@ class Boxplot {
         .attr("height", d => (vis.yScale(d['q1']) - vis.yScale(d['q3'])))
         .attr("width", 100)
         .attr("stroke", "black")
-        .style("fill", "#E5B5D8")
+        .style("fill", "#c08078")
           .on('mousemove', (event, d) => {
             d3.select('#tooltip')
               .style('display', 'block')
@@ -166,17 +166,17 @@ class Boxplot {
 
             if (clicked != d['password_type']) {
               d3.select(`.type-${d['password_type']}`)
-                .style('fill', '#E5B5D8');
+                .style('fill', '#c08078');
             }
           })
           .on('click', function (event, d) {
             if (clicked) {
               if (clicked != d['password_type']) {
                 d3.select(`.type-${clicked}`)
-                .style('fill', '#E5B5D8');
+                .style('fill', '#c08078');
 
                 d3.select(`.type-${d['password_type']}`)
-                  .style('fill', '#FFCC00');
+                  .style('fill', '#c08078');
 
                 clicked = d['password_type'];
               } else {
