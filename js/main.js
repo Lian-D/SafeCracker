@@ -125,7 +125,7 @@ dispatcher.on('countrySelect', (country) => {
   lolipopgraph.selectedCountry = country;
   lolipopgraph.updateVis();
   beeswarm.data = fulldata.filter((d) => d.country == country);
-    beeswarm.selectedPasswords = [];
+  beeswarm.selectedPasswords = [];
   beeswarm.updateVis();
 
   boxplot.selectedCountry = country;
@@ -133,22 +133,22 @@ dispatcher.on('countrySelect', (country) => {
 });
 
 dispatcher.on('selectPass', (password, add = true) => {
-    if (add) {
-        beeswarm.selectedPasswords.push(password);
-        beeswarm.updateVis();
+  if (add) {
+    beeswarm.selectedPasswords.push(password);
+    beeswarm.updateVis();
 
-        lolipopgraph.selectedPasswords.push(password);
-        lolipopgraph.updateVis();
-    } else {
-        let ind = beeswarm.selectedPasswords.indexOf(password)
-        beeswarm.selectedPasswords.splice(ind,1);
-        beeswarm.updateVis();
+    lolipopgraph.selectedPasswords.push(password);
+    lolipopgraph.updateVis();
+  } else {
+    let ind = beeswarm.selectedPasswords.indexOf(password);
+    beeswarm.selectedPasswords.splice(ind, 1);
+    beeswarm.updateVis();
 
-        let ind2 = lolipopgraph.selectedPasswords.indexOf(password)
-        lolipopgraph.selectedPasswords.splice(ind2,1);
-        lolipopgraph.updateVis();
-    }
-})
+    let ind2 = lolipopgraph.selectedPasswords.indexOf(password);
+    lolipopgraph.selectedPasswords.splice(ind2, 1);
+    lolipopgraph.updateVis();
+  }
+});
 
 dispatcher.on('filterPasswordType', (passwordType, country) => {
   beeswarm.data = fulldata.filter((d) => {
@@ -161,7 +161,6 @@ dispatcher.on('filterPasswordType', (passwordType, country) => {
 });
 
 d3.select('#numberselect').on('change', () => {
-
   let rankFilter = d3.select('#numberselect').node().value;
 
   let filterData = fulldata.filter((d) => {
