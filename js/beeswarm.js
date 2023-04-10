@@ -265,9 +265,9 @@ class Beeswarm {
                         d3.select("#tooltip")
                             .style("display", "block")
                             .html(`<div class="tooltip-label">
-                                    Password: "${d["Password"]}" <br>
-                                    Time to crack password: ${d["Time_to_crack_in_seconds"]}s <br>
-                                    Number of users: ${d["User_count"]}
+                                    <b>Password:</b> "${d["Password"]}" <br>
+                                    <b>Time to crack password:</b> ${d["Time_to_crack_in_seconds"]}s <br>
+                                    <b>Number of users:</b> ${d["User_count"]}
                                     </div>`);
                     })
                     .on("mousemove", (event,d) => {
