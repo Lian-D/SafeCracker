@@ -98,9 +98,10 @@ class Lollipop {
       vis.data.reverse();
     }
 
-    d3.selectAll('.labeltitle').text(
-      `Top ${rankFilter} Passwords for ${vis.selectedCountry} Based On User Count`
-    );
+    d3.selectAll(".labeltitle")
+      .attr('font-weight', 700)
+      .attr('font-size', 15)
+      .text(`Top ${rankFilter} passwords for ${vis.selectedCountry} Based On User Count`)
 
     // Specify accessors
     vis.xValue = (d) => d.User_count;

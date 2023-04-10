@@ -210,6 +210,8 @@ class Boxplot {
         .attr('class', 'chart-title')
         .attr('x', vis.width/2)
         .attr('y', -15)
+        .attr('font-weight', 700)
+        .attr('font-size', 15)
         .attr('text-anchor', 'middle')
         .text(d => `Average User Count by Password Type for ${d}`);
 

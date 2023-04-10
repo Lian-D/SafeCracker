@@ -139,9 +139,10 @@ class Beeswarm {
     vis.xValue = (d) => d['Time_to_crack_in_seconds'];
 
     // Set chartTitle
-    d3.selectAll('.chartTitle').text(
-      `Time To Crack Password Beeswarm for ${vis.data[0]['country']}`
-    );
+    d3.selectAll('.chartTitle')
+        .attr('font-weight', 700)
+        .attr('font-size', 15)
+        .text(`Time To Crack Password Beeswarm for ${vis.data[0]['country']}`);
 
     // Update x scale domain
     let xExtent = d3.extent(vis.data, (d) => d['Time_to_crack_in_seconds']);
