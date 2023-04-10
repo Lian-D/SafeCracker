@@ -47,7 +47,8 @@ class Lollipop {
       .attr(
         'transform',
         `translate(${vis.config.margin.left}, ${vis.config.margin.top})`
-      );
+      )
+
 
     // Init scales and axes
     vis.xScale = d3
