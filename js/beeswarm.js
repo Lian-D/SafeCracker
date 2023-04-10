@@ -3,7 +3,7 @@ class Beeswarm {
         this.config = {
             parentElement: _config.parentElement,
             containerWidth: 1400 || _config.containerWidth,
-            containerHeight: 500 || _config.containerHeight,
+            containerHeight: 300 || _config.containerHeight,
             tooltipPadding: 15,
             margin: {
                 top: 20,
@@ -13,6 +13,8 @@ class Beeswarm {
             },
             defaultPointOpacity: "0.5" || _config.defaultPointOpacity,
             hoverPointOpacity: "1" || _config.hoverPointOpacity,
+            selectedPointFill: "#FFD700" || _config.selectedPointFill,
+            selectedPointOpacity: "1" || _config.selectedPointOpacity,
             defaultBarFill: "white" || _config.defaultBarFill,
             hoverBarFill: "#FFF8DC" || _config.hoverBarFill,
             legendBottom: 50,
@@ -20,6 +22,7 @@ class Beeswarm {
             legendRectHeight: 12,
             legendRectWidth: 150,
         };
+        this.selectedPasswords = [];
         this.data = _data;
         this.dispatcher = _dispatcher;
         this.initVis();
@@ -43,7 +46,7 @@ class Beeswarm {
 
         // Init scales and axes
         vis.xScale = d3.scalePow()
-                        .exponent(0.5)
+                        .exponent(0.4)
                         .range([0,vis.width]);
 
         vis.xAxis = d3.axisBottom(vis.xScale)
@@ -153,7 +156,6 @@ class Beeswarm {
             }
         }
         vis.dataForPoints = dataForPoints;
-        
         vis.renderVis();
     }
 
@@ -193,18 +195,40 @@ class Beeswarm {
                         })
 
         vis.chart.selectAll("circle")
-                    .data(vis.dataForPoints)
+                    .data(vis.dataForPoints, d => d.Password)
                     .join("circle")
                         .attr("class", "point")
                         .attr("cx", d => d["x"])
                         .attr("cy", d => d["y"])
                         .attr("r", 5)
-                        .attr("fill", d => vis.colorScale(d["User_count"]))
-                        .attr("opacity", vis.config.defaultPointOpacity)
+                        .attr("fill", d => {
+                            if (vis.selectedPasswords.includes(d.Password)) {
+                                return vis.config.selectedPointFill;
+                            } else {
+                                return vis.colorScale(d["User_count"]);
+                            }
+                            
+                        })
+                        .attr("opacity", d => {
+                            if (vis.selectedPasswords.includes(d.Password)) {
+                                return vis.config.selectedPointOpacity;
+                            } else {
+                                return vis.config.defaultPointOpacity;
+                            }
+                        })
+                        .attr("stroke", d => {
+                            if (vis.selectedPasswords.includes(d.Password)) {
+                                return "black";
+                            } else {
+                                return null;
+                            }
+                        })
                         .on("mouseover", (event,d) => {
                             let point = d3.select(event.target);
-                            point.attr("fill","black");
-                            point.attr("opacity", vis.config.hoverPointOpacity);
+                            if (!vis.selectedPasswords.includes(d.Password)) {
+                                point.attr("fill","black");
+                                point.attr("opacity", vis.config.hoverPointOpacity);
+                            }
                             d3.select("#tooltip")
                                 .style("display", "block")
                                 .html(`<div class="tooltip-label">
@@ -220,10 +244,20 @@ class Beeswarm {
                         })
                         .on("mouseleave", (event,d) => {
                             let point = d3.select(event.target);
-                            point.attr("fill", d => vis.colorScale(d["User_count"]));
-                            point.attr("opacity", vis.config.defaultPointOpacity);
+                            if (!vis.selectedPasswords.includes(d.Password)) {
+                                point.attr("fill", d => vis.colorScale(d["User_count"]));
+                                point.attr("opacity", vis.config.defaultPointOpacity);
+                            }
                             d3.select("#tooltip")
                                 .style("display", "none");
+                        })
+                        .on("click", function(event,d) {
+                            if (vis.selectedPasswords.includes(d.Password)) {
+                                vis.dispatcher.call("selectPass", event, d.Password, false);
+                            } else {
+                                vis.dispatcher.call("selectPass", event, d.Password, true);
+                            }
+                            
                         });
 
         // Add legend labels
