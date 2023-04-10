@@ -159,7 +159,7 @@ class Boxplot {
               `);
             
             d3.select(`.type-${d['password_type']}`)
-              .style('fill', '#E873C8');
+              .style('fill', '#FFCC00');
           })
           .on('mouseleave', (_, d) => {
             d3.select('#tooltip').style('display', 'none');
@@ -176,7 +176,7 @@ class Boxplot {
                 .style('fill', '#E5B5D8');
 
                 d3.select(`.type-${d['password_type']}`)
-                  .style('fill', '#E873C8');
+                  .style('fill', '#FFCC00');
 
                 clicked = d['password_type'];
               } else {
