@@ -6,7 +6,7 @@ class Beeswarm {
       containerHeight: 300 || _config.containerHeight,
       tooltipPadding: 15,
       margin: {
-        top: 20,
+        top: 50,
         left: 30,
         right: 20,
         bottom: 40,
@@ -15,8 +15,6 @@ class Beeswarm {
       hoverPointOpacity: '1' || _config.hoverPointOpacity,
       selectedPointFill: '#FFD700' || _config.selectedPointFill,
       selectedPointOpacity: '1' || _config.selectedPointOpacity,
-      defaultBarFill: 'white' || _config.defaultBarFill,
-      hoverBarFill: '#FFF8DC' || _config.hoverBarFill,
       legendBottom: 50,
       legendLeft: 50,
       legendRectHeight: 12,
@@ -102,8 +100,8 @@ class Beeswarm {
 
     // Add listener here to clear beeswarm background bin fill when mouse leaves the chart
     vis.chart.on('mouseleave', (event, d) => {
-      let allBars = d3.selectAll('.beeswarmbar');
-      allBars.attr('fill', vis.config.defaultBarFill);
+      let activeBar = vis.chart.selectAll('.active');
+      activeBar.classed("active", false);
     });
 
     // Append legend
@@ -195,6 +193,7 @@ class Beeswarm {
                     .data(vis.bins)
                     .join("rect")
                         .attr("class", "bar beeswarmbar")
+                        .attr("identifier", (d,i) => i)
                         .attr("x", d => {
                             if (isOneBin) {
                                 return 0;
@@ -211,28 +210,32 @@ class Beeswarm {
                         })
                         .attr("height", vis.height)
                         .attr("stroke-width", 2)
-                        .attr("fill", vis.config.defaultBarFill)
                         .attr("opacity", 1)
                         .on("mouseover", (event,d) => {
-                            let allBars = d3.selectAll(".beeswarmbar");
-                            allBars.attr("fill", vis.config.defaultBarFill);
                             let targetBar = d3.select(event.target);
-                            targetBar.attr("fill", vis.config.hoverBarFill);
+                            let activeBar = vis.chart.select(".active");
+                            if (activeBar.empty()) {
+                              targetBar.classed("active", true);
+                            } else if (activeBar.attr("identifier") != targetBar.attr("identifier")) {
+                              activeBar.classed("active", false);
+                              targetBar.classed("active", true);
+                            }
                             d3.select("#tooltip")
                                 .style("display","block")
                                 .html(`<div class="tooltip-label">
                                             Passwords with crack time between<br> 
                                             ${Math.round(d.x0)}s-${Math.round(d.x1)}s<br>
                                         </div>`);
-      })
-      .on('mousemove', (event, d) => {
-        d3.select('#tooltip')
-          .style('left', event.pageX + vis.config.tooltipPadding + 'px')
-          .style('top', event.pageY + vis.config.tooltipPadding + 'px');
-      })
-      .on('mouseleave', (event, d) => {
-        d3.select('#tooltip').style('display', 'none');
-      });
+                        })
+                        .on('mousemove', (event, d) => {
+                          d3.select('#tooltip')
+                            .style('left', event.pageX + vis.config.tooltipPadding + 'px')
+                            .style('top', event.pageY + vis.config.tooltipPadding + 'px');
+                        })
+                        .on('mouseleave', (event, d) => {
+                          d3.select('#tooltip').style('display', 'none');
+                        });
+
         vis.chart.selectAll("circle")
                     .data(vis.dataForPoints, d => d.Password)
                     .join("circle")
@@ -290,7 +293,7 @@ class Beeswarm {
                     .on("mousemove", (event,d) => {
                         d3.select("#tooltip")
                             .style("left", (event.pageX + vis.config.tooltipPadding) + "px")
-                            .style("top", (event.pageY + vis.config.tooltipPadding) + "px")
+                            .style("top", (event.pageY - vis.config.tooltipPadding) + "px")
                     })
                     .on("mouseleave", (event,d) => {
                         let point = d3.select(event.target);
@@ -347,7 +350,7 @@ class Beeswarm {
         let xIncr = 0;
         let yIncr = 0;
         for (let i = 0; d[i] != undefined; i++) {
-          d[i]['x'] = vis.xScale(d['x0']) + 3 + 15 * xIncr;
+          d[i]['x'] = vis.xScale(d['x0']) + 4 + 15 * xIncr;
           d[i]['y'] = vis.height - 15 * yIncr - 5;
           yIncr = yIncr + 1;
           if (15 * yIncr >= vis.height - 5) {
