@@ -1,13 +1,60 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;800&display=swap');
+/* demo setup */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box }
+body { min-height: 100vh; padding: 2rem; background-color: #EBEBEB; font-family: 'Open Sans', sans-serif; }
+body > * + *  { margin-top: 1.5em }
+h1{ text-align: center; font-weight: 800; color: rgb(6 6 6); text-transform: uppercase }
+/* blockquote { max-width: 1500em; margin-inline: auto } */
+
+
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400italic);
+blockquote{
+  font-size: 1.4em;
+  width:100%;
+  margin:50px auto;
+  font-family:Open Sans;
+  font-style:italic;
+  color: #555555;
+  padding:1.2em 30px 1.2em 75px;
+  border-left:8px solid #c08078 ;
+  line-height:1.6;
+  max-width: 2700em;
+  position: relative;
+  background:#EDEDED;
+}
+
+blockquote swarm{
+  font-size: 1.4em;
+  width:60%;
+  margin:50px auto;
+  font-family:Open Sans;
+  font-style:italic;
+  color: #555555;
+  padding:1.2em 30px 1.2em 75px;
+  border-left:8px solid #c08078 ;
+  line-height:1.6;
+  max-width: 350em;
+  position: relative;
+  background:#EDEDED;
+}
+
+blockquote span{
+  display:block;
+  color:#333333;
+  font-style: normal;
+  font-weight: bold;
+  margin-top:1em;
+}
+
 body {
-  font-family: Helvetica, sans-serif;
+  font-family: Open Sans;
   padding: 20px 40px;
   /* background-color: #3b3a3a */
 }
 h1 {
-  font-family: 'Times New Roman', Times, serif;
+  font-family: Open Sans;
   margin: auto;
   text-align: center;
-  font-style: italic;
 }
 
 .divMid {
@@ -41,30 +88,47 @@ p {
   color: #000;
   font-size: 14px;
   font-weight: 600;
+  font-family: Open Sans;
 }
 
+/* Axes */
 .axis line {
-  stroke: #020202;
+  fill: none;
+  stroke: #8693a0;
   shape-rendering: crispEdges;
 }
 .axis text {
   font-size: 10px;
-  fill: #080808;
+  fill: #6b6b6b;
 }
 .axis-title {
-  font-size: 10px;
-  fill: #070606;
+  font-size: 13px;
+  fill: #888;
 }
-.y-axis .tick:first-child line {
-  stroke: #000000;
+.x-axis .domain {
+  stroke: #8693a0;
+}
+.y-axis .domain {
+  stroke: #8693a0;
+}
+
+.chart-area {
+  fill: #e9eff5;
+}
+.chart-line {
+  fill: none;
+  stroke: #517390;
+  stroke-width: 2px;
 }
 
 .legend-title {
   font-size: 0.7rem;
   font-weight: 600;
+  font-family: Open Sans;
 }
 .legend-label {
   font-size: 0.7rem;
+  font-family: Open Sans;
 }
 
 #beeswarm-container {

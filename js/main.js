@@ -124,6 +124,7 @@ dispatcher.on('countrySelect', (country) => {
   lolipopgraph.selectedCountry = [];
   lolipopgraph.selectedCountry = country;
   lolipopgraph.updateVis();
+
   beeswarm.data = fulldata.filter((d) => d.country == country);
   beeswarm.selectedPasswords = [];
   beeswarm.updateVis();
@@ -158,15 +159,19 @@ dispatcher.on('filterPasswordType', (passwordType, country) => {
     return d.country == country;
   });
   beeswarm.updateVis();
+
+  lolipopgraph.selectedPasswordType = passwordType;
+  lolipopgraph.updateVis();
 });
 
 d3.select('#numberselect').on('change', () => {
   let rankFilter = d3.select('#numberselect').node().value;
 
-  let filterData = fulldata.filter((d) => {
-    return d.Rank <= rankFilter;
+  fulldata = fulldata.sort((a, b) => {
+    return a.User_count > b.User_count;
   });
 
+  let filterData = fulldata.slice(0, rankFilter);
   lolipopgraph.data = filterData;
   lolipopgraph.updateVis();
 });

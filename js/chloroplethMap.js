@@ -44,7 +44,9 @@ class ChloroplethMap {
       .select(vis.config.parentElement)
       .append('svg')
       .attr('width', vis.config.containerWidth)
-      .attr('height', vis.config.containerHeight);
+      .attr('height', vis.config.containerHeight)
+      .attr('display', 'block')
+      .style("margin", "auto");
 
     // Append group element that will contain our actual chart
     // and position it according to the given margin config

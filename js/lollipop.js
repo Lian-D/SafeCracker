@@ -5,12 +5,7 @@ class Lollipop {
       containerWidth: 800 || _config.containerWidth,
       containerHeight: 470 || _config.containerHeight,
       tooltipPadding: 15,
-      margin: {
-        top: 20,
-        left: 65,
-        right: 20,
-        bottom: 40,
-      },
+      margin: { top: 40, left: 100, right: 20, bottom: 50 },
       reverseOrder: _config.reverseOrder || false,
     };
     this.data = _data;
@@ -18,6 +13,7 @@ class Lollipop {
     this.dispatcher = _dispatcher;
     this.selectedCountry = filteredCountry;
     this.selectedPasswords = [];
+    this.selectedPasswordType = null;
     this.initVis();
   }
 
@@ -46,7 +42,8 @@ class Lollipop {
       .attr(
         'transform',
         `translate(${vis.config.margin.left}, ${vis.config.margin.top})`
-      );
+      )
+
 
     // Init scales and axes
     vis.xScale = d3
@@ -77,11 +74,24 @@ class Lollipop {
     vis.chart
       .append('text')
       .attr('class', 'labeltitle')
-      .attr(
-        'x',
-        vis.width / 4 - vis.config.margin.left - vis.config.margin.right
-      )
-      .attr('y', -8);
+      .attr('x', vis.width / 2 )
+      .attr('y', -15)
+      .attr('font-weight', 700)
+      .attr('font-size', 15)
+      .attr('text-anchor', 'middle');
+
+    // append axis titles
+    vis.chart.append('text')
+      .attr('class', 'axis-title')
+      .attr('x', vis.width - vis.config.margin.left - vis.config.margin.right)
+      .attr('y', vis.height + vis.config.margin.bottom - 10)
+      .text('User Count');
+    
+    vis.chart.append('text')
+      .attr('class', 'axis-title')
+      .attr('x', -vis.config.margin.left)
+      .attr('y', -15)
+      .text('Password Value');
 
     vis.updateVis();
   }
@@ -91,17 +101,32 @@ class Lollipop {
     let rankFilter = d3.select('#numberselect').node().value;
 
     vis.data = vis.fulldata.filter((d) => {
-      return d.country == vis.selectedCountry && d.Rank <= rankFilter;
+      if (vis.selectedPasswordType) {
+        return d.country == vis.selectedCountry && d.password_type == vis.selectedPasswordType;
+      } else {
+        return d.country == vis.selectedCountry;
+      }
     });
 
-    if (vis.config.reverseOrder) {
-      vis.data.reverse();
-    }
+    vis.data.sort((a, b) => {
+      return a.User_count > b.User_count;
+    });
 
-    d3.selectAll(".labeltitle")
-      .attr('font-weight', 700)
-      .attr('font-size', 15)
-      .text(`Top ${rankFilter} passwords for ${vis.selectedCountry} Based On User Count`)
+    vis.data = vis.data.slice(0, rankFilter);
+
+    let labeltext;
+
+    if (vis.selectedPasswordType) {
+        labeltext = `Top ${rankFilter} ${vis.selectedPasswordType} Passwords for ${vis.selectedCountry} Based On User Count`;
+    } else {
+        labeltext = `Top ${rankFilter} Passwords for ${vis.selectedCountry} Based On User Count`;
+    }
+    console.log(labeltext);
+
+    d3.selectAll('.labeltitle')
+      .text(
+        labeltext
+      );
 
     // Specify accessors
     vis.xValue = (d) => d.User_count;
@@ -136,7 +161,20 @@ class Lollipop {
       .attr('y2', (d) => {
         return vis.yScale(vis.yValue(d)) - 5;
       })
-      .attr('stroke', 'grey');
+      .attr('stroke', (d) => {
+        if (vis.selectedPasswords.includes(d.Password)) {
+          return '#FFD700';
+        } else {
+          return '#c08078';
+        }
+      })
+      .attr('stroke-width', (d) => {
+        if (vis.selectedPasswords.includes(d.Password)) {
+          return '3';
+        } else {
+          return '1';
+        }
+      });
 
     const passwordDot = vis.chart
       .selectAll('.circle')
@@ -160,13 +198,12 @@ class Lollipop {
       })
       .attr('fill', (d) => {
         if (vis.selectedPasswords.includes(d.Password)) {
-
           return '#FFD700';
         } else {
-          return '#E7A0D4';
+          return '#c08078';
         }
       })
-      .attr('stroke', 'grey')
+      .attr('stroke', 'black')
       .transition()
       .duration(100);
 
@@ -195,7 +232,6 @@ class Lollipop {
         } else {
           vis.dispatcher.call('selectPass', event, d.Password, true);
         }
-
       });
 
     vis.xAxisG.call(vis.xAxis).transition().duration(1000);
