@@ -5,12 +5,7 @@ class Lollipop {
       containerWidth: 800 || _config.containerWidth,
       containerHeight: 470 || _config.containerHeight,
       tooltipPadding: 15,
-      margin: {
-        top: 20,
-        left: 65,
-        right: 20,
-        bottom: 40,
-      },
+      margin: { top: 40, left: 100, right: 20, bottom: 50 },
       reverseOrder: _config.reverseOrder || false,
     };
     this.data = _data;
@@ -79,11 +74,24 @@ class Lollipop {
     vis.chart
       .append('text')
       .attr('class', 'labeltitle')
-      .attr(
-        'x',
-        vis.width / 4 - vis.config.margin.left - vis.config.margin.right
-      )
-      .attr('y', -8);
+      .attr('x', vis.width / 2 )
+      .attr('y', -15)
+      .attr('font-weight', 700)
+      .attr('font-size', 15)
+      .attr('text-anchor', 'middle');
+
+    // append axis titles
+    vis.chart.append('text')
+      .attr('class', 'axis-title')
+      .attr('x', vis.width - vis.config.margin.left - vis.config.margin.right)
+      .attr('y', vis.height + vis.config.margin.bottom - 10)
+      .text('User Count');
+    
+    vis.chart.append('text')
+      .attr('class', 'axis-title')
+      .attr('x', -vis.config.margin.left)
+      .attr('y', -15)
+      .text('Password Value');
 
     vis.updateVis();
   }
@@ -116,8 +124,6 @@ class Lollipop {
     console.log(labeltext);
 
     d3.selectAll('.labeltitle')
-      .attr('font-weight', 700)
-      .attr('font-size', 15)
       .text(
         labeltext
       );

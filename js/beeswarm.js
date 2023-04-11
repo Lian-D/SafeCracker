@@ -96,11 +96,9 @@ class Beeswarm {
     vis.chart
       .append('text')
       .attr('class', 'label chartTitle')
-      .attr(
-        'x',
-        vis.width / 2 - vis.config.margin.left - vis.config.margin.right
-      )
-      .attr('y', -8);
+      .attr('x', vis.width / 2)
+      .attr('y', -8)
+      .attr('text-anchor', 'middle');
 
     // Add listener here to clear beeswarm background bin fill when mouse leaves the chart
     vis.chart.on('mouseleave', (event, d) => {
