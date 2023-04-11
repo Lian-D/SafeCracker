@@ -6,7 +6,7 @@ class Beeswarm {
       containerHeight: 300 || _config.containerHeight,
       tooltipPadding: 15,
       margin: {
-        top: 20,
+        top: 50,
         left: 30,
         right: 20,
         bottom: 40,
@@ -15,8 +15,6 @@ class Beeswarm {
       hoverPointOpacity: '1' || _config.hoverPointOpacity,
       selectedPointFill: '#FFD700' || _config.selectedPointFill,
       selectedPointOpacity: '1' || _config.selectedPointOpacity,
-      defaultBarFill: 'white' || _config.defaultBarFill,
-      hoverBarFill: '#FFF8DC' || _config.hoverBarFill,
       legendBottom: 50,
       legendLeft: 50,
       legendRectHeight: 12,
@@ -90,7 +88,7 @@ class Beeswarm {
       .attr('class', 'label x-axis-title')
       .attr('x', '0')
       .attr('y', `${35 + vis.height}`)
-      .text('Time to crack (in seconds)');
+      .text('Time to crack (in seconds with SI prefixes)');
 
     // Add chart title. The actual text is set in updateVis since the title is dynamic
     vis.chart
@@ -102,8 +100,8 @@ class Beeswarm {
 
     // Add listener here to clear beeswarm background bin fill when mouse leaves the chart
     vis.chart.on('mouseleave', (event, d) => {
-      let allBars = d3.selectAll('.beeswarmbar');
-      allBars.attr('fill', vis.config.defaultBarFill);
+      let activeBar = vis.chart.selectAll('.active');
+      activeBar.classed("active", false);
     });
 
     // Append legend
@@ -191,48 +189,57 @@ class Beeswarm {
         let isOneBin = (vis.xScale.domain()[0] == 0 && vis.xScale.domain()[1] == 0) ? true: false;
         // Offset used to shift the points in the case mentioned above
         let oneBinOffset = vis.xScale(vis.bins[0]["x0"]);
-        vis.chart.selectAll(".bar")
-                    .data(vis.bins)
-                    .join("rect")
-                        .attr("class", "bar beeswarmbar")
-                        .attr("x", d => {
-                            if (isOneBin) {
-                                return 0;
-                            } else {
-                                return vis.xScale(d.x0);
-                            }
-                        })
-                        .attr("width", d => {
-                            if (isOneBin) {
-                                return vis.width;
-                            } else {
-                                return vis.xScale(d.x1)-vis.xScale(d.x0);
-                            }
-                        })
-                        .attr("height", vis.height)
-                        .attr("stroke-width", 2)
-                        .attr("fill", vis.config.defaultBarFill)
-                        .attr("opacity", 1)
-                        .on("mouseover", (event,d) => {
-                            let allBars = d3.selectAll(".beeswarmbar");
-                            allBars.attr("fill", vis.config.defaultBarFill);
-                            let targetBar = d3.select(event.target);
-                            targetBar.attr("fill", vis.config.hoverBarFill);
-                            d3.select("#tooltip")
-                                .style("display","block")
-                                .html(`<div class="tooltip-label">
-                                            Passwords with crack time between<br> 
-                                            ${Math.round(d.x0)}s-${Math.round(d.x1)}s<br>
-                                        </div>`);
-      })
-      .on('mousemove', (event, d) => {
-        d3.select('#tooltip')
-          .style('left', event.pageX + vis.config.tooltipPadding + 'px')
-          .style('top', event.pageY + vis.config.tooltipPadding + 'px');
-      })
-      .on('mouseleave', (event, d) => {
-        d3.select('#tooltip').style('display', 'none');
-      });
+        let bars = vis.chart.selectAll(".beeswarmbar")
+                              .data(vis.bins);
+        let barsEnter = bars.enter().append("rect")
+                                      .attr("class", "bar beeswarmbar");
+
+        barsEnter.merge(bars)
+                    .attr("identifier", (d,i) => i)
+                    .attr("x", d => {
+                        if (isOneBin) {
+                            return 0;
+                        } else {
+                            return vis.xScale(d.x0);
+                        }
+                    })
+                    .attr("width", d => {
+                        if (isOneBin) {
+                            return vis.width;
+                        } else {
+                            return vis.xScale(d.x1)-vis.xScale(d.x0);
+                        }
+                    })
+                    .attr("height", vis.height)
+                    .attr("stroke-width", 2)
+                    .attr("opacity", 1)
+                    .on("mouseover", (event,d) => {
+                        let targetBar = d3.select(event.target);
+                        let activeBar = vis.chart.select(".active");
+                        if (activeBar.empty()) {
+                          targetBar.classed("active", true);
+                        } else if (activeBar.attr("identifier") != targetBar.attr("identifier")) {
+                          activeBar.classed("active", false);
+                          targetBar.classed("active", true);
+                        }
+                        d3.select("#tooltip")
+                            .style("display","block")
+                            .html(`<div class="tooltip-label">
+                                        Passwords with crack time between<br> 
+                                        ${Math.round(d.x0)}s-${Math.round(d.x1)}s<br>
+                                    </div>`);
+                    })
+                    .on('mousemove', (event, d) => {
+                      d3.select('#tooltip')
+                        .style('left', event.pageX + vis.config.tooltipPadding + 'px')
+                        .style('top', event.pageY + vis.config.tooltipPadding + 'px');
+                    })
+                    .on('mouseleave', (event, d) => {
+                      d3.select('#tooltip').style('display', 'none');
+                    });
+        
+        bars.exit().remove();
+
         vis.chart.selectAll("circle")
                     .data(vis.dataForPoints, d => d.Password)
                     .join("circle")
@@ -290,7 +297,7 @@ class Beeswarm {
                     .on("mousemove", (event,d) => {
                         d3.select("#tooltip")
                             .style("left", (event.pageX + vis.config.tooltipPadding) + "px")
-                            .style("top", (event.pageY + vis.config.tooltipPadding) + "px")
+                            .style("top", (event.pageY - vis.config.tooltipPadding) + "px")
                     })
                     .on("mouseleave", (event,d) => {
                         let point = d3.select(event.target);
@@ -347,7 +354,7 @@ class Beeswarm {
         let xIncr = 0;
         let yIncr = 0;
         for (let i = 0; d[i] != undefined; i++) {
-          d[i]['x'] = vis.xScale(d['x0']) + 3 + 15 * xIncr;
+          d[i]['x'] = vis.xScale(d['x0']) + 4 + 15 * xIncr;
           d[i]['y'] = vis.height - 15 * yIncr - 5;
           yIncr = yIncr + 1;
           if (15 * yIncr >= vis.height - 5) {
