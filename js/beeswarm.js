@@ -88,7 +88,7 @@ class Beeswarm {
       .attr('class', 'label x-axis-title')
       .attr('x', '0')
       .attr('y', `${35 + vis.height}`)
-      .text('Time to crack (in seconds)');
+      .text('Time to crack (in seconds with SI prefixes)');
 
     // Add chart title. The actual text is set in updateVis since the title is dynamic
     vis.chart
@@ -189,52 +189,56 @@ class Beeswarm {
         let isOneBin = (vis.xScale.domain()[0] == 0 && vis.xScale.domain()[1] == 0) ? true: false;
         // Offset used to shift the points in the case mentioned above
         let oneBinOffset = vis.xScale(vis.bins[0]["x0"]);
-        vis.chart.selectAll(".bar")
-                    .data(vis.bins)
-                    .join("rect")
-                        .attr("class", "bar beeswarmbar")
-                        .attr("identifier", (d,i) => i)
-                        .attr("x", d => {
-                            if (isOneBin) {
-                                return 0;
-                            } else {
-                                return vis.xScale(d.x0);
-                            }
-                        })
-                        .attr("width", d => {
-                            if (isOneBin) {
-                                return vis.width;
-                            } else {
-                                return vis.xScale(d.x1)-vis.xScale(d.x0);
-                            }
-                        })
-                        .attr("height", vis.height)
-                        .attr("stroke-width", 2)
-                        .attr("opacity", 1)
-                        .on("mouseover", (event,d) => {
-                            let targetBar = d3.select(event.target);
-                            let activeBar = vis.chart.select(".active");
-                            if (activeBar.empty()) {
-                              targetBar.classed("active", true);
-                            } else if (activeBar.attr("identifier") != targetBar.attr("identifier")) {
-                              activeBar.classed("active", false);
-                              targetBar.classed("active", true);
-                            }
-                            d3.select("#tooltip")
-                                .style("display","block")
-                                .html(`<div class="tooltip-label">
-                                            Passwords with crack time between<br> 
-                                            ${Math.round(d.x0)}s-${Math.round(d.x1)}s<br>
-                                        </div>`);
-                        })
-                        .on('mousemove', (event, d) => {
-                          d3.select('#tooltip')
-                            .style('left', event.pageX + vis.config.tooltipPadding + 'px')
-                            .style('top', event.pageY + vis.config.tooltipPadding + 'px');
-                        })
-                        .on('mouseleave', (event, d) => {
-                          d3.select('#tooltip').style('display', 'none');
-                        });
+        let bars = vis.chart.selectAll(".beeswarmbar")
+                              .data(vis.bins);
+        let barsEnter = bars.enter().append("rect")
+                                      .attr("class", "bar beeswarmbar");
+
+        barsEnter.merge(bars)
+                    .attr("identifier", (d,i) => i)
+                    .attr("x", d => {
+                        if (isOneBin) {
+                            return 0;
+                        } else {
+                            return vis.xScale(d.x0);
+                        }
+                    })
+                    .attr("width", d => {
+                        if (isOneBin) {
+                            return vis.width;
+                        } else {
+                            return vis.xScale(d.x1)-vis.xScale(d.x0);
+                        }
+                    })
+                    .attr("height", vis.height)
+                    .attr("stroke-width", 2)
+                    .attr("opacity", 1)
+                    .on("mouseover", (event,d) => {
+                        let targetBar = d3.select(event.target);
+                        let activeBar = vis.chart.select(".active");
+                        if (activeBar.empty()) {
+                          targetBar.classed("active", true);
+                        } else if (activeBar.attr("identifier") != targetBar.attr("identifier")) {
+                          activeBar.classed("active", false);
+                          targetBar.classed("active", true);
+                        }
+                        d3.select("#tooltip")
+                            .style("display","block")
+                            .html(`<div class="tooltip-label">
+                                        Passwords with crack time between<br> 
+                                        ${Math.round(d.x0)}s-${Math.round(d.x1)}s<br>
+                                    </div>`);
+                    })
+                    .on('mousemove', (event, d) => {
+                      d3.select('#tooltip')
+                        .style('left', event.pageX + vis.config.tooltipPadding + 'px')
+                        .style('top', event.pageY + vis.config.tooltipPadding + 'px');
+                    })
+                    .on('mouseleave', (event, d) => {
+                      d3.select('#tooltip').style('display', 'none');
+                    });
+        
+        bars.exit().remove();
 
         vis.chart.selectAll("circle")
                     .data(vis.dataForPoints, d => d.Password)
