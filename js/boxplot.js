@@ -176,7 +176,7 @@ class Boxplot {
                 .style('fill', '#c08078');
 
                 d3.select(`.type-${d['password_type']}`)
-                  .style('fill', '#c08078');
+                  .style('fill', '#FFCC00');
 
                 clicked = d['password_type'];
               } else {
