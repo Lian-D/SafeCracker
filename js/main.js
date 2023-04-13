@@ -123,6 +123,7 @@ dispatcher.on('countrySelect', (country) => {
 
   lolipopgraph.selectedCountry = [];
   lolipopgraph.selectedCountry = country;
+  lolipopgraph.selectedPasswords = [];
   lolipopgraph.updateVis();
 
   beeswarm.data = fulldata.filter((d) => d.country == country);
