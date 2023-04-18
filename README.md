@@ -1,3 +1,4 @@
+![](thumbnail.png)
 # D3 Project Starter Template
 
 # References
